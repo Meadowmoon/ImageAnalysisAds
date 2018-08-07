@@ -1,0 +1,26 @@
+<annotation>
+	<folder>cups</folder>
+	<filename>Bl49RSoHFAB.jpg</filename>
+	<path>C:\myProj\scrap insta\cups\Bl49RSoHFAB.jpg</path>
+	<source>
+		<database>Unknown</database>
+	</source>
+	<size>
+		<width>150</width>
+		<height>150</height>
+		<depth>3</depth>
+	</size>
+	<segmented>0</segmented>
+	<object>
+		<name>other</name>
+		<pose>Unspecified</pose>
+		<truncated>0</truncated>
+		<difficult>0</difficult>
+		<bndbox>
+			<xmin>30</xmin>
+			<ymin>51</ymin>
+			<xmax>112</xmax>
+			<ymax>97</ymax>
+		</bndbox>
+	</object>
+</annotation>

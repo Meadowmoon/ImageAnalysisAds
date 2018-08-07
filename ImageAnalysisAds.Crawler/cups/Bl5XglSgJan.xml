@@ -1,0 +1,38 @@
+<annotation>
+	<folder>cups</folder>
+	<filename>Bl5XglSgJan.jpg</filename>
+	<path>C:\myProj\scrap insta\cups\Bl5XglSgJan.jpg</path>
+	<source>
+		<database>Unknown</database>
+	</source>
+	<size>
+		<width>150</width>
+		<height>150</height>
+		<depth>3</depth>
+	</size>
+	<segmented>0</segmented>
+	<object>
+		<name>cups</name>
+		<pose>Unspecified</pose>
+		<truncated>0</truncated>
+		<difficult>0</difficult>
+		<bndbox>
+			<xmin>8</xmin>
+			<ymin>43</ymin>
+			<xmax>75</xmax>
+			<ymax>112</ymax>
+		</bndbox>
+	</object>
+	<object>
+		<name>cups</name>
+		<pose>Unspecified</pose>
+		<truncated>0</truncated>
+		<difficult>0</difficult>
+		<bndbox>
+			<xmin>61</xmin>
+			<ymin>25</ymin>
+			<xmax>121</xmax>
+			<ymax>96</ymax>
+		</bndbox>
+	</object>
+</annotation>
