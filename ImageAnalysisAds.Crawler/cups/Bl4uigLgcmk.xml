@@ -1,0 +1,26 @@
+<annotation>
+	<folder>cups</folder>
+	<filename>Bl4uigLgcmk.jpg</filename>
+	<path>C:\myProj\scrap insta\cups\Bl4uigLgcmk.jpg</path>
+	<source>
+		<database>Unknown</database>
+	</source>
+	<size>
+		<width>150</width>
+		<height>150</height>
+		<depth>3</depth>
+	</size>
+	<segmented>0</segmented>
+	<object>
+		<name>other</name>
+		<pose>Unspecified</pose>
+		<truncated>0</truncated>
+		<difficult>0</difficult>
+		<bndbox>
+			<xmin>60</xmin>
+			<ymin>35</ymin>
+			<xmax>107</xmax>
+			<ymax>89</ymax>
+		</bndbox>
+	</object>
+</annotation>
