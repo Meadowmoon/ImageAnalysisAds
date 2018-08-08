@@ -4,7 +4,7 @@
     <title>Python Flask Bucket List App</title>
     <link href="https://getbootstrap.com/docs/3.3/dist/css/bootstrap.min.css" rel="stylesheet">
     <link href="https://getbootstrap.com/docs/3.3/examples/jumbotron-narrow/jumbotron-narrow.css" rel="stylesheet">
-    <link href="../css/signup.css" rel="stylesheet">
+    <link href="../static/css/signup.css" rel="stylesheet">
   </head>
   <body>
     <div class="container">
@@ -21,7 +21,7 @@
  
       <div class="jumbotron">
         <h1>Bucket List App</h1>
-        <form class="form-signin">
+        <form class="form-signin" action="/signup" method="post">
         <label for="inputName" class="sr-only">Name</label>
         <input type="name" name="inputName" id="inputName" class="form-control" placeholder="Name" required autofocus>
         <label for="inputEmail" class="sr-only">Email address</label>
@@ -29,7 +29,7 @@
         <label for="inputPassword" class="sr-only">Password</label>
         <input type="password" name="inputPassword" id="inputPassword" class="form-control" placeholder="Password" required>
          
-        <button id="btnSignUp" class="btn btn-lg btn-primary btn-block" type="button">Sign up</button>
+        <button id="btnSignUp" class="btn btn-lg btn-primary btn-block" type="submit">Sign up</button>
       </form>
       </div>
  
