@@ -10,12 +10,12 @@ class Logger():
 
     def config(self,name):
         logger = logging.getLogger(name)
-        if os.path.exists(self.LOG_PATH):
+        if os.path.exists(Logger.LOG_PATH):
             pass
         else:
             os.mkdir(self.LOG_PATH)
         formatter = logging.Formatter('%(asctime)s %(levelname)-8s: %(message)s')
-        file_handler = logging.FileHandler("%s/%s" % (self.LOG_PATH, self.LOG_FILE))
+        file_handler = logging.FileHandler("%s/%s" % (Logger.LOG_PATH, Logger.LOG_FILE))
         file_handler.setFormatter(formatter) 
         console_handler = logging.StreamHandler(sys.stdout)
         console_handler.formatter = formatter 
