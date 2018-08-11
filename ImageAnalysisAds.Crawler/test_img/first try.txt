@@ -1,0 +1,35 @@
+c1.jpg
+Evaluation time (1-image): 0.710s
+other (score=0.51174)
+cups (score=0.39353)
+puppy (score=0.09473)
+
+c2.jpg
+Evaluation time (1-image): 0.723s
+other (score=0.86615)
+puppy (score=0.10674)
+cups (score=0.02711)
+
+c3.jpg
+Evaluation time (1-image): 0.694s
+other (score=0.99911)
+cups (score=0.00083)
+puppy (score=0.00005)
+
+c4.jpg
+Evaluation time (1-image): 0.689s
+other (score=0.99228)
+cups (score=0.00598)
+puppy (score=0.00174)
+
+c5.jpg
+Evaluation time (1-image): 0.684s
+other (score=0.66213)
+puppy (score=0.32614)
+cups (score=0.01172)
+
+c6.jpg
+Evaluation time (1-image): 0.684s
+other (score=0.99996)
+puppy (score=0.00004)
+cups (score=0.00000)
