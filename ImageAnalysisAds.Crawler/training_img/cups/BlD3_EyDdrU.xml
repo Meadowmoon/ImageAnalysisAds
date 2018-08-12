@@ -1,0 +1,26 @@
+<annotation>
+	<folder>cups</folder>
+	<filename>BlD3_EyDdrU.jpg</filename>
+	<path>C:\myProj\ImageAnalysisAds\ImageAnalysisAds.Crawler\training_img\cups\BlD3_EyDdrU.jpg</path>
+	<source>
+		<database>Unknown</database>
+	</source>
+	<size>
+		<width>150</width>
+		<height>150</height>
+		<depth>1</depth>
+	</size>
+	<segmented>0</segmented>
+	<object>
+		<name>cups</name>
+		<pose>Unspecified</pose>
+		<truncated>1</truncated>
+		<difficult>0</difficult>
+		<bndbox>
+			<xmin>1</xmin>
+			<ymin>20</ymin>
+			<xmax>50</xmax>
+			<ymax>83</ymax>
+		</bndbox>
+	</object>
+</annotation>

@@ -1,0 +1,26 @@
+<annotation>
+	<folder>cups</folder>
+	<filename>BmK5U49gnhQ.jpg</filename>
+	<path>C:\myProj\ImageAnalysisAds\ImageAnalysisAds.Crawler\training_img\cups\BmK5U49gnhQ.jpg</path>
+	<source>
+		<database>Unknown</database>
+	</source>
+	<size>
+		<width>150</width>
+		<height>150</height>
+		<depth>3</depth>
+	</size>
+	<segmented>0</segmented>
+	<object>
+		<name>cups</name>
+		<pose>Unspecified</pose>
+		<truncated>0</truncated>
+		<difficult>0</difficult>
+		<bndbox>
+			<xmin>15</xmin>
+			<ymin>23</ymin>
+			<xmax>134</xmax>
+			<ymax>142</ymax>
+		</bndbox>
+	</object>
+</annotation>

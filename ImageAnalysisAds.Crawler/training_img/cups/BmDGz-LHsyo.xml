@@ -1,0 +1,26 @@
+<annotation>
+	<folder>cups</folder>
+	<filename>BmDGz-LHsyo.jpg</filename>
+	<path>C:\myProj\ImageAnalysisAds\ImageAnalysisAds.Crawler\training_img\cups\BmDGz-LHsyo.jpg</path>
+	<source>
+		<database>Unknown</database>
+	</source>
+	<size>
+		<width>150</width>
+		<height>150</height>
+		<depth>3</depth>
+	</size>
+	<segmented>0</segmented>
+	<object>
+		<name>cups</name>
+		<pose>Unspecified</pose>
+		<truncated>0</truncated>
+		<difficult>0</difficult>
+		<bndbox>
+			<xmin>65</xmin>
+			<ymin>57</ymin>
+			<xmax>102</xmax>
+			<ymax>78</ymax>
+		</bndbox>
+	</object>
+</annotation>
