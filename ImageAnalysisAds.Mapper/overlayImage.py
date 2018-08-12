@@ -8,11 +8,9 @@ class CORNER:
     BOTTOM_RIGHT = 4
 
 class OverlayOp:
-    def __init__(self, display=False):
-        ## Define a point (posx, posy) on the source
+    def __init__(self, display=False):        
         self.posx = 0  
-        self.posy = 0  
-        ## Define blending coefficients S and D
+        self.posy = 0          
         self.S = (0.2, 0.2, 0.2)  
         self.D = (0.8, 0.8, 0.8)      
         self.display = display      
@@ -52,9 +50,8 @@ class OverlayOp:
             cv2.imshow('Contours', cont)
             cv2.waitKey(0)
          
-        mask = np.zeros(cont.shape[:2], dtype="uint8") * 255
-         
-        # Draw the contours on the mask
+        mask = np.zeros(cont.shape[:2], dtype="uint8") * 255         
+        
         cv2.drawContours(mask, cnts, -1, (255, 255, 255), -1)
          
         # remove the contours from the image and show the resulting images
@@ -121,6 +118,7 @@ class OverlayOp:
             
         return self.OverlayImage(src, overlay)
 
+# example to use this API to overlay image
 overlayOp = OverlayOp(False)     
 overlayOp.Operator("dog.jpg", "dog-food.jpg", 0.5, CORNER.BOTTOM_RIGHT)
 cv2.destroyAllWindows() 
