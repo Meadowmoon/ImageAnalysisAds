@@ -9,5 +9,3 @@ https://blog.miguelgrinberg.com/post/the-flask-mega-tutorial-part-i-hello-world<
 # FAQ:
 1. How to run the application?<br/>
 Read the "Readme.txt" file in ImageAnalysisAds.Web repository
-
-Kunsong
