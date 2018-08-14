@@ -19,15 +19,18 @@ login_manager.init_app(app)
 def main():
     return render_template('index.html')
 
-@app.route('/showSignUp')
+""" @app.route('/showSignUp')
 def showSignUp():
-    return render_template('signup.html')
+    return render_template('signup.html') """
 
 @app.route('/signup', methods = ['POST'])
 def signup():
+    logger.debug("signup")
+    print('going to method')
     name = request.form['inputName']
     email = request.form['inputEmail']
     password = request.form['inputPassword']
+    password2 = request.form['inputPassword2']
 
     user = User(name, email, password)
     db_session.add(user)
