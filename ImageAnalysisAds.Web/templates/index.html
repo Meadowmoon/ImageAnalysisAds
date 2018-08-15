@@ -25,19 +25,18 @@
 				<h2>Login </h2>
 				<form action="#" method="post">
 					<div class="form-sub-w3">
-						<input type="text" name="Username" placeholder="Username" required="" />
-					<div class="icon-w3">
-						<i class="fa fa-user" aria-hidden="true"></i>
-					</div>
+						<input type="text" name="Username" placeholder="Username" required />
+						<div class="icon-w3">
+							<i class="fa fa-user" aria-hidden="true"></i>
+						</div>
 					</div>
 					<div class="form-sub-w3">
-						<input type="password" name="Password" placeholder="Password" required="" />
-					<div class="icon-w3">
-						<i class="fa fa-unlock-alt" aria-hidden="true"></i>
-					</div>
+						<input type="password" name="Password" placeholder="Password" required />
+						<div class="icon-w3">
+							<i class="fa fa-unlock-alt" aria-hidden="true"></i>
+						</div>
 					</div>
 					<p class="p-bottom-w3ls">Are you new?<a class="w3_play_icon1" href="#small-dialog1">  Register here</a></p>
-					
 					<div class="submit-w3l">
 						<input type="submit" value="Login">
 					</div>
@@ -51,34 +50,34 @@
 				<h3>Register Form</h3>
 				<form id='formRegister' action="/signup" method="post">
 					<div class="form-sub-w3ls">
-						<input placeholder="User Name" name='inputName' type="text" required="">
+						<input placeholder="User Name" name='inputName' type="text" required>
 						<div class="icon-agile">
 							<i class="fa fa-user" aria-hidden="true"></i>
 						</div>
 					</div>
 					<div class="form-sub-w3ls">
-						<input placeholder="Email" name='inputEmail' class="mail" type="email" required="">
+						<input placeholder="Email" name='inputEmail' class="mail" type="email" required>
 						<div class="icon-agile">
 							<i class="fa fa-envelope-o" aria-hidden="true"></i>
 						</div>
 					</div>
 					<div class="form-sub-w3ls">
-						<input id='inputPassword' placeholder="Password" name='inputPassword' type="password" required="">
+						<input id='inputPassword' placeholder="Password" name='inputPassword' type="password" required>
 						<div class="icon-agile">
 							<i class="fa fa-unlock-alt" aria-hidden="true"></i>
 						</div>
 					</div>
 					<div class="form-sub-w3ls">
-						<input id='inputPassword2' placeholder="Confirm Password" name='inputPassword2' type="password" required="">
+						<input id='inputPassword2' placeholder="Confirm Password" name='inputPassword2' type="password" required>
 						<div class="icon-agile">
 							<i class="fa fa-unlock-alt" aria-hidden="true"></i>
 						</div>
 					</div>
 					<div class="login-check">
-						<label class="checkbox"><input id='chkAgree' type="checkbox" name="checkbox" checked=""><p>I Accept Terms & Conditions</p></label>
+						<label class="checkbox"><input id='chkAgree' type="checkbox" name="checkbox" onclick="chkAgree_Click()"><p>I Accept Terms & Conditions</p></label>
 					</div>
 					<div class="submit-w3l">
-						<input id='btnSubmit' type="submit" value="Register">
+						<input id='btnSubmit' type="submit" value="Register" disabled>
 					</div>
 				</form>
 			</div>
@@ -111,12 +110,22 @@
 		$('#btnSubmit').click(function() {
 			var password = $('#inputPassword').val();
 			var password2 = $('#inputPassword2').val();
-			var isAgreed = $('#chkAgree').is(':checked');
-			if (password==password2 && password!=''){
-				return isAgreed==true;
+			if (password!=password2 || (password==''||password2=='')){
+				alert('Password is invalid!')
+				return false;
+			}else{
+				return true
 			}
-			return false;
 		});
+
+		function chkAgree_Click(){
+			var isAgreed = $('#chkAgree').is(':checked');
+			if (isAgreed){
+				$('#btnSubmit').prop('disabled',false);
+			}else{
+				$('#btnSubmit').prop('disabled',true);
+			}
+		}
 	</script>
 </body>
 </html>
