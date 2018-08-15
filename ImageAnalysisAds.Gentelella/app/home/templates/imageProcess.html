@@ -1,0 +1,165 @@
+{% extends "base_site.html" %}
+
+{% block title %} Plain Page {% endblock title %}
+
+{% block stylesheets %}
+  {{ super() }}
+{% endblock stylesheets %}
+
+{% block content %}
+    <div class="right_col" role="main">
+      <div class="row">
+          <div class="col-md-12 col-sm-12 col-xs-12">
+            <div class="x_panel">
+              <div class="x_title">
+                <h2>Object Detection</h2>
+                <div class="clearfix"></div>
+              </div>
+              <div class="x_content">
+                  <a class="btn btn-app">
+                      <i class="fa fa-file-image-o"></i> Upload Image
+                  </a>
+                  <br>
+                  <div class="col-md-6 col-sm-6 col-xs-12" style="border:0px solid #e5e5e5;">
+                      <div class="x_panel tile">
+                          <div class="x_content">
+                            <div class="product-image fixed_height_320">
+                                <img src="/static/images/cat.jpg" alt="..." />
+                            </div>
+                          </div>
+                        </div>
+                    </div>
+                  <div class="col-md-6 col-sm-6 col-xs-12" style="border:0px solid #e5e5e5;">
+                    <div class="x_panel tile">
+                        <div class="x_title">
+                          <h4>Detected Objects</h4>
+                          <div class="clearfix"></div>
+                        </div>
+                        <div class="x_content">
+                          <div class="widget_summary">
+                            <div class="w_left w_25">
+                              <span>cat</span>
+                            </div>
+                            <div class="w_center w_55">
+                              <div class="progress">
+                                <div class="progress-bar bg-green" role="progressbar" aria-valuenow="60" aria-valuemin="0" aria-valuemax="100" style="width: 26%;">
+                                  <span class="sr-only">60% Complete</span>
+                                </div>
+                              </div>
+                            </div>
+                            <div class="w_right w_20">
+                              <span>1.79559</span>
+                            </div>
+                            <div class="clearfix"></div>
+                          </div>
+              
+                          <div class="widget_summary">
+                            <div class="w_left w_25">
+                              <span>feline</span>
+                            </div>
+                            <div class="w_center w_55">
+                              <div class="progress">
+                                <div class="progress-bar bg-green" role="progressbar" aria-valuenow="60" aria-valuemin="0" aria-valuemax="100" style="width: 25%;">
+                                  <span class="sr-only">60% Complete</span>
+                                </div>
+                              </div>
+                            </div>
+                            <div class="w_right w_20">
+                              <span>1.74239</span>
+                            </div>
+                            <div class="clearfix"></div>
+                          </div>
+                          <div class="widget_summary">
+                            <div class="w_left w_25">
+                              <span>domestic cat</span>
+                            </div>
+                            <div class="w_center w_55">
+                              <div class="progress">
+                                <div class="progress-bar bg-green" role="progressbar" aria-valuenow="60" aria-valuemin="0" aria-valuemax="100" style="width: 24%;">
+                                  <span class="sr-only">60% Complete</span>
+                                </div>
+                              </div>
+                            </div>
+                            <div class="w_right w_20">
+                              <span>1.71551</span>
+                            </div>
+                            <div class="clearfix"></div>
+                          </div>
+                          <div class="widget_summary">
+                            <div class="w_left w_25">
+                              <span>tabby</span>
+                            </div>
+                            <div class="w_center w_55">
+                              <div class="progress">
+                                <div class="progress-bar bg-green" role="progressbar" aria-valuenow="60" aria-valuemin="0" aria-valuemax="100" style="width: 14%;">
+                                  <span class="sr-only">60% Complete</span>
+                                </div>
+                              </div>
+                            </div>
+                            <div class="w_right w_20">
+                              <span>0.95449</span>
+                            </div>
+                            <div class="clearfix"></div>
+                          </div>
+                          <div class="widget_summary">
+                            <div class="w_left w_25">
+                              <span>domestic animal</span>
+                            </div>
+                            <div class="w_center w_55">
+                              <div class="progress">
+                                <div class="progress-bar bg-green" role="progressbar" aria-valuenow="60" aria-valuemin="0" aria-valuemax="100" style="width: 11%;">
+                                  <span class="sr-only">60% Complete</span>
+                                </div>
+                              </div>
+                            </div>
+                            <div class="w_right w_20">
+                              <span>0.77145</span>
+                            </div>
+                            <div class="clearfix"></div>
+                          </div>
+                        </div>
+                      </div>
+                  </div>
+                  <div class="clearfix"></div>
+                  <div class="col-md-6 col-sm-6 col-xs-12" style="border:0px solid #e5e5e5;">
+                      <div class="x_panel tile">
+                          <div class="x_title">
+                            <h4>Image with Frames</h4>
+                            <div class="clearfix"></div>
+                          </div>
+                          <div class="x_content">
+                              <div class="x_content">
+                                  <div class="product-image fixed_height_320">
+                                      <img src="/static/images/cat_frame.jpg" alt="..." />
+                                  </div>
+                              </div>
+                          </div>
+                      </div>
+                  </div>
+                  <div class="col-md-6 col-sm-6 col-xs-12" style="border:0px solid #e5e5e5;">
+                      <div class="x_panel tile">
+                          <div class="x_title">
+                            <h4>Image with Target</h4>
+                            <div class="clearfix"></div>
+                          </div>
+                          <div class="x_content">
+                              <div class="x_content">
+                                  <div class="product-image fixed_height_320">
+                                      <img src="/static/images/cat_target.jpg" alt="..." />
+                                  </div>
+                              </div>
+                          </div>
+                      </div>
+                  </div>
+
+              </div>
+            </div>
+          </div>
+      </div>
+    </div>
+{% endblock content %}
+
+{% block javascripts %}
+  {{ super() }}
+{% endblock javascripts %}
+

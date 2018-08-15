@@ -1631,6 +1631,11 @@ ul.quick-list li i {
     float: left;
     text-align: left
 }
+
+.widget_summary .w_left span {
+    font-size: 18px
+}
+
 .widget_summary .w_center {
     float: left
 }
@@ -1639,7 +1644,7 @@ ul.quick-list li i {
     text-align: right
 }
 .widget_summary .w_right span {
-    font-size: 20px
+    font-size: 18px
 }
 .w_20 {
     width: 20%
@@ -3353,7 +3358,9 @@ ul.project_files li a i {
     font-weight: 400
 }
 .product-image img {
-    width: 90%
+    object-fit: cover;
+    width:100%;
+    height:100%;
 }
 .prod_color li {
     margin: 0 10px
@@ -3402,7 +3409,8 @@ ul.project_files li a i {
     /*background: #F7F7F7;*/
     background:#fff;
 	background-size: cover;
-	background: url(../../images/background.jpg) no-repeat 0px 0px;
+    background: url(../../images/background.jpg) no-repeat 0px 0px;
+    background-position: center; 
 }
 .login .fa-paw {
     font-size: 26px
