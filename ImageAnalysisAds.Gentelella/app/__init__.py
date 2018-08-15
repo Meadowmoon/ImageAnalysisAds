@@ -1,4 +1,4 @@
-from app.config import ProductionConfig
+from app.config import *
 from flask import Flask
 from flask_login import LoginManager
 from flask_sqlalchemy import SQLAlchemy
@@ -15,7 +15,7 @@ def register_extensions(app):
 
 
 def register_blueprints(app):
-    for module_name in ('base', 'forms', 'ui', 'home', 'tables', 'data', 'additional', 'base'):
+    for module_name in ('base', 'forms', 'ui', 'home', 'tables', 'data', 'additional'):
         module = import_module('app.{}.routes'.format(module_name))
         app.register_blueprint(module.blueprint)
 
@@ -39,7 +39,7 @@ def configure_logs(app):
 
 def create_app(selenium=False):
     app = Flask(__name__, static_folder='base/static')
-    app.config.from_object(ProductionConfig)
+    app.config.from_object(DebugConfig)
     if selenium:
         app.config['LOGIN_DISABLED'] = True
     register_extensions(app)

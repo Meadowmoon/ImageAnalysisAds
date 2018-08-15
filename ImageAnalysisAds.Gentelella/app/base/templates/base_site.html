@@ -3,6 +3,9 @@
   <head>
     {% block head %}
       {% block meta %}
+        <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate" />
+        <meta http-equiv="Pragma" content="no-cache" />
+        <meta http-equiv="Expires" content="0" />
         <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
         <!-- Meta, title, CSS, favicons, etc. -->
         <link rel="icon" href="{{ url_for('static', filename='images/favicon.ico') }}" type="image/ico" />
@@ -11,7 +14,7 @@
         <meta name="viewport" content="width=device-width, initial-scale=1">
       {% endblock meta %}
 
-      <title>Image Analysis & Advertisement | {% block title %}{% endblock %}</title>
+      <title>StickedOn | {% block title %}{% endblock %}</title>
 
       {% block stylesheets %}
         <!-- Bootstrap -->
@@ -41,7 +44,11 @@
 
           {% block sidebar %}
             <div class="col-md-3 left_col {% block sidebar_class %} {% endblock sidebar_class %}">
-              {% include "site_template/sidebar.html" %}
+              {% if current_user.username == 'admin' %}
+                {% include "site_template/sidebar_admin.html" %}
+              {% else %}
+                {% include "site_template/sidebar.html" %}
+              {% endif %}
             </div>
           {% endblock sidebar %}
 

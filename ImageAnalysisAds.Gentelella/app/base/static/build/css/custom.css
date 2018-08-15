@@ -3399,7 +3399,10 @@ ul.project_files li a i {
     font-size: 35px
 }
 .login {
-    background: #F7F7F7
+    /*background: #F7F7F7;*/
+    background:#fff;
+	background-size: cover;
+	background: url(../../images/background.jpg) no-repeat 0px 0px;
 }
 .login .fa-paw {
     font-size: 26px
@@ -3418,7 +3421,12 @@ a.hiddenanchor {
 .login_form {
     position: absolute;
     top: 0px;
-    width: 100%
+    width: 100%;
+    background: rgba(80, 180, 150, 0.3);
+    -webkit-box-shadow: 0px 35px 44px -22px rgba(0,0,0,0.72);
+    -moz-box-shadow: 0px 35px 44px -22px rgba(0,0,0,0.72);
+    box-shadow: 0px 35px 44px -22px #1f181b;
+    padding: 60px 40px;
 }
 .registration_form {
     z-index: 21;
