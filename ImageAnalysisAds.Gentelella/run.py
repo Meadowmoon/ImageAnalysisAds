@@ -3,3 +3,5 @@ from flask_migrate import Migrate
 
 app = create_app()
 Migrate(app, db)
+
+app.run()
