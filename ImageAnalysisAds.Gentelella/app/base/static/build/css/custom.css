@@ -3358,7 +3358,7 @@ ul.project_files li a i {
     font-weight: 400
 }
 .product-image img {
-    object-fit: cover;
+    object-fit: contain;
     width:100%;
     height:100%;
 }
