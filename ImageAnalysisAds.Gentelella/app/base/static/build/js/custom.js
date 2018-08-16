@@ -2231,7 +2231,32 @@ if (typeof NProgress != 'undefined') {
 			  });
 			  
 			} 
+			
+			if ($('#myDemoBarChart').length ){ 
+			  var ctx = document.getElementById("myDemoBarChart");
+			  var myDemoBarChart = new Chart(ctx, {
+				type: 'bar',
+				data: {
+				  labels: ["Tom", "Jerry", "Michael", "John", "Jessica", "Natasha", "KS"],
+				  datasets: [{
+					label: '# of upload',
+					backgroundColor: "#26B99A",
+					data: [92, 88, 75, 63, 46, 33, 10]
+				  }]
+				},
+
+				options: {
+				  scales: {
+					yAxes: [{
+					  ticks: {
+						beginAtZero: true
+					  }
+					}]
+				  }
+				}
+			  });
 			  
+			} 
 
 			  // Doughnut chart
 			  
