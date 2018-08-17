@@ -6,7 +6,7 @@ from flask_login import login_required
 @blueprint.route('/index')
 @login_required
 def index():
-    return render_template('index.html')
+    return render_template('image_process.html')
 
 
 @blueprint.route('/<template>')
