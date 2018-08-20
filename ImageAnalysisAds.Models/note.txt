@@ -27,3 +27,4 @@
  Average Recall     (AR) @[ IoU=0.50:0.95 | area=medium | maxDets=100 ] = 0.657
  Average Recall     (AR) @[ IoU=0.50:0.95 | area= large | maxDets=100 ] = 0.867
 
+python3 export_inference_graph.py --pipeline_config_path=training/ssd_mobilenet_v1_coco.config --trained_checkpoint_prefix=training/model.ckpt-5000 --output_directory=training/frozen
