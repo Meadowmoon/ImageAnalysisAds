@@ -1,0 +1,14 @@
+<annotation>
+	<folder>puppy</folder>
+	<filename>BmLjny8hPz9.jpg</filename>
+	<path>C:\myProj\ImageAnalysisAds\ImageAnalysisAds.Crawler\training_img\puppy\BmLjny8hPz9.jpg</path>
+	<source>
+		<database>Unknown</database>
+	</source>
+	<size>
+		<width>150</width>
+		<height>150</height>
+		<depth>3</depth>
+	</size>
+	<segmented>0</segmented>
+</annotation>
