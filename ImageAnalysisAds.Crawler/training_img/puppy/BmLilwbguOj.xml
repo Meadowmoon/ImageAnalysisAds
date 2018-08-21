@@ -1,0 +1,26 @@
+<annotation>
+	<folder>puppy</folder>
+	<filename>BmLilwbguOj.jpg</filename>
+	<path>C:\myProj\ImageAnalysisAds\ImageAnalysisAds.Crawler\training_img\puppy\BmLilwbguOj.jpg</path>
+	<source>
+		<database>Unknown</database>
+	</source>
+	<size>
+		<width>150</width>
+		<height>150</height>
+		<depth>3</depth>
+	</size>
+	<segmented>0</segmented>
+	<object>
+		<name>puppy</name>
+		<pose>Unspecified</pose>
+		<truncated>0</truncated>
+		<difficult>0</difficult>
+		<bndbox>
+			<xmin>20</xmin>
+			<ymin>15</ymin>
+			<xmax>114</xmax>
+			<ymax>107</ymax>
+		</bndbox>
+	</object>
+</annotation>
