@@ -79,7 +79,7 @@ class OverlayOp:
         
         return img
     
-    def OverlayImage(self, src, overlay):
+    def OverlayImage(self, src, overlay, result_file):
         src_height, src_width = src.shape[:2]
         overlay_height, overlay_width = overlay.shape[:2]
         
@@ -97,36 +97,42 @@ class OverlayOp:
         if(self.display): 
             cv2.imshow('image', src) 
             cv2.waitKey(0) 
-        cv2.imwrite('result.png', src)  # Saves the image
+        cv2.imwrite(result_file, src)  # Saves the image
         
         return src
     
-    def Operator(self, src_file, overlay_file, ratio, corner):
+    def Operator(self, src_file, overlay_file, result_file="result.png", percentage = 0.20, corner = CORNER.BOTTOM_LEFT):
         # Load a source image
         src = cv2.imread(src_file)  
         # Load an image to overlay 
         overlay = cv2.imread(overlay_file)  
-        # Resize overlay image.
-        overlay = cv2.resize(overlay, (0, 0), fx=ratio, fy=ratio) 
-        overlay = self.RmoveBackground(overlay)        
         src_height, src_width = src.shape[:2]
         overlay_height, overlay_width = overlay.shape[:2]
+        src_size = src_height * src_width
+        overlay_size = overlay_height * overlay_width
+        ratio = percentage * src_size / overlay_size
+        # Resize overlay image.
+        overlay = cv2.resize(overlay, (0, 0), fx=ratio, fy=ratio) 
+        overlay_height, overlay_width = overlay.shape[:2]
+        overlay = self.RmoveBackground(overlay)        
+
         if corner == CORNER.TOP_LEFT :
             self.posx = 0
             self.posy = 0
         elif corner == CORNER.TOP_RIGHT :
-            self.posx = src_width - overlay_width - 1
+            self.posx = src_width - overlay_width
             self.posy = 0
         elif corner == CORNER.BOTTOM_LEFT :
             self.posx = 0
-            self.posy = src_height - overlay_height - 1
+            self.posy = src_height - overlay_height
         elif corner == CORNER.BOTTOM_RIGHT :
-            self.posx = src_width - overlay_width - 1
-            self.posy = src_height - overlay_height - 1
+            self.posx = src_width - overlay_width
+            self.posy = src_height - overlay_height
             
-        return self.OverlayImage(src, overlay)
+        return self.OverlayImage(src, overlay, result_file)
 
 # example to use this API to overlay image
-overlayOp = OverlayOp(True)     
-overlayOp.Operator("dog5.jpg", "dog-food.jpg", 0.5, CORNER.BOTTOM_RIGHT)
+overlayOp = OverlayOp(False)     
+#overlayOp.Operator("dog5.jpg", "dog-food.jpg", 0.2, CORNER.BOTTOM_RIGHT)
+overlayOp.Operator("cup.jpeg", "cup-label.png", "result2.png")
 cv2.destroyAllWindows() 
