@@ -1,0 +1,2 @@
+model_checkpoint_path: "dogs-backs-model"
+all_model_checkpoint_paths: "dogs-backs-model"
