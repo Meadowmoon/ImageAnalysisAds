@@ -11,8 +11,8 @@ class OverlayOp:
     def __init__(self, display=False):        
         self.posx = 0  
         self.posy = 0          
-        self.S = (0.2, 0.2, 0.2)  
-        self.D = (0.8, 0.8, 0.8)      
+        self.S = (0.1, 0.1, 0.1)  
+        self.D = (0.9, 0.9, 0.9)      
         self.display = display      
 
     def RmoveBackground(self, image):
@@ -22,11 +22,15 @@ class OverlayOp:
         copy = image.copy()
          
         gray = cv2.cvtColor(image, cv2.COLOR_BGR2GRAY)
+        gray = cv2.GaussianBlur(gray, (5, 5), 0)
+        cv2.imwrite('gray.png', gray)
         if(self.display):
             cv2.imshow('Gray', gray)
             cv2.waitKey(0)
-         
+        
+
         edged = cv2.Canny(gray, 10, 250)
+        cv2.imwrite('edged.png', edged)
         if(self.display):
             cv2.imshow('Edged', edged)
             cv2.waitKey(0)
@@ -34,11 +38,13 @@ class OverlayOp:
         kernel = np.ones((3, 3), np.uint8)
          
         dilation = cv2.dilate(edged, kernel, iterations=1)
+        cv2.imwrite('delation.png', dilation)
         if(self.display):
-            cv2.imshow('Dilation', dilation)
+            cv2.imshow('open', dilation)
             cv2.waitKey(0)
          
         closing = cv2.morphologyEx(dilation, cv2.MORPH_CLOSE, kernel)
+        cv2.imwrite('closing.png', closing)
         if(self.display):
             cv2.imshow('Closing', closing)
             cv2.waitKey(0)
@@ -46,6 +52,7 @@ class OverlayOp:
         (image, cnts, hiers) = cv2.findContours(closing, cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_SIMPLE)
          
         cont = cv2.drawContours(copy, cnts, -1, (0, 0, 0), 2, cv2.LINE_AA)
+        cv2.imwrite('contour.png', cont)
         if(self.display):
             cv2.imshow('Contours', cont)
             cv2.waitKey(0)
@@ -53,9 +60,10 @@ class OverlayOp:
         mask = np.zeros(cont.shape[:2], dtype="uint8") * 255         
         
         cv2.drawContours(mask, cnts, -1, (255, 255, 255), -1)
-         
+        
         # remove the contours from the image and show the resulting images
         img = cv2.bitwise_and(cont, cont, mask=mask)
+        cv2.imwrite('aftermask.png', img)
         if(self.display):
             cv2.imshow("Mask", img)
             cv2.waitKey(0)
@@ -119,6 +127,6 @@ class OverlayOp:
         return self.OverlayImage(src, overlay)
 
 # example to use this API to overlay image
-overlayOp = OverlayOp(False)     
-overlayOp.Operator("dog.jpg", "dog-food.jpg", 0.5, CORNER.BOTTOM_RIGHT)
+overlayOp = OverlayOp(True)     
+overlayOp.Operator("dog5.jpg", "dog-food.jpg", 0.5, CORNER.BOTTOM_RIGHT)
 cv2.destroyAllWindows() 
