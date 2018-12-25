@@ -22,6 +22,8 @@ from keras.applications import imagenet_utils
 from keras.preprocessing.image import img_to_array
 import os
 import tensorflow as tf
+import sys
+from object_detection.utils import label_map_util
 
 # initialize constants used to control image spatial dimensions and
 # data type
@@ -39,6 +41,7 @@ IMAGE_URLS = "image_urls"
 CWD_PATH = os.getcwd()
 PATH_TO_CKPT = os.path.join(CWD_PATH,'frozen20k', 'frozen_inference_graph.pb')
 PATH_TO_LABELS = os.path.join(CWD_PATH, 'object-detection.pbtxt')
+NUM_CLASSES = 1
 
 # initialize our Flask application, Redis server
 app = flask.Flask(__name__)
@@ -60,6 +63,7 @@ with detection_graph.as_default():
 print("* Model loaded")
 '''
 def load_image_into_numpy_array(image):
+    print(image)
     (im_width, im_height) = image.size
     return np.array(image.getdata()).reshape(
             (im_height, im_width, 3)).astype(np.uint8)
@@ -115,6 +119,20 @@ def run_inference_for_single_image(image, graph):
 def base64_encode_image(a):
     return base64.b64encode(a).decode("utf-8")
 
+def base64_decode_image(a, dtype, shape):
+	# if this is Python 3, we need the extra step of encoding the
+	# serialized NumPy string as a byte object
+	if sys.version_info.major == 3:
+		a = bytes(a, encoding="utf-8")
+ 
+	# convert the string to a NumPy array using the supplied data
+	# type and target shape
+	a = np.frombuffer(base64.decodestring(a), dtype=dtype)
+	a = a.reshape(shape)
+ 
+	# return the decoded image
+	return a
+
 def prepare_image(image, target):
     # if the image mode is not RGB, convert it
     if image.mode != "RGB":
@@ -146,49 +164,68 @@ def classify_process():
           tf.import_graph_def(od_graph_def, name='')
     
     print("* Model loaded")
+    # loading label map
+    label_map = label_map_util.load_labelmap(PATH_TO_LABELS)
+    categories = label_map_util.convert_label_map_to_categories(label_map, max_num_classes=NUM_CLASSES, 
+                                                            use_display_name=True)
+    category_index = label_map_util.create_category_index(categories)
 
     # continually pool for new images to classify
     while True:
         queue = db.lrange(IMAGE_QUEUE, 0, BATCH_SIZE - 1)
-        imageIDs = []
-        batch = []
+        image_ids = []
+        batch = None
+        #print('polling')
 
         # loop over the queue
         for q in queue:
             q = json.loads(q.decode("utf-8"))
-            url = q["url"]
+            image = base64_decode_image(q["image"], IMAGE_DTYPE, (1, IMAGE_HEIGHT, IMAGE_WIDTH, IMAGE_CHANS))
             if batch is None:
-                batch = url
+                batch = image
             else:
-                batch.append(url)
-            imageIDs.append(q["id"])
+                batch = np.vstack([batch, image])
+            image_ids.append(q["id"])
 
         # check to see if we need to process the batch
-        if len(imageIDs) > 0:
+        if len(image_ids) > 0:
             print("found image")
             results = []
-            for img in batch:
-                image_np = load_image_into_numpy_array(img)
+            for (image_id, img) in zip(image_ids, batch):
+                image_np = img # load_image_into_numpy_array(img)
                 print("loaded image into numpy")
                 # Expand dimensions since the model expects images to have shape: [1, None, None, 3]
-                image_np_expanded = np.expand_dims(image_np, axis=0)
+                #image_np_expanded = np.expand_dims(image_np, axis=0)
                 # Actual detection.
                 output_dict = run_inference_for_single_image(image_np, detection_graph)
                 
                 #detect_result = detector.detect(img)
-                print(output_dict)
-                print(type(output_dict))
-                results.extend(output_dict)
-            for (imageID, resultSet) in zip(imageIDs, results):
-                output = []
-                output.append(resultSet)
+                detected_class = output_dict['detection_classes'][0]
+                #print(category_index[detected_class]['name'])
+                #print("detection_classes aa: " + category_index[detected_class]['name'])
+                #print("detection_scores aa: " + str(output_dict['detection_scores'][0]))
+                #print(type(output_dict['detection_classes'][0]))
+                
+                r = {"detection_classes": category_index[detected_class]['name'],
+                     "detection_scores": str(output_dict['detection_scores'][0]), 
+                     "detection_box": str(output_dict['detection_boxes'][0])}
+                results.extend(r)
+                #print(type(output_dict))
+                db.set(image_id, json.dumps(r))
+                print("saved result")
+            #for (imageID, resultSet) in zip(imageIDs, results):
+            #    print(imageID)
+            #    print("result set: ")
+            #    print(resultSet)
+                #output = []
+                #output.append(resultSet)
 
                 # store the output predictions in the database, using
                 # the image ID as the key so we can fetch the results
-                db.set(imageID, json.dumps(output))
+            #    db.set(imageID, json.dumps(resultSet))
 
             # remove the set of images from our queue
-            db.ltrim(IMAGE_QUEUE, len(imageIDs), -1)
+            db.ltrim(IMAGE_QUEUE, len(image_ids), -1)
 
         time.sleep(SERVER_SLEEP)
 
@@ -196,16 +233,20 @@ def classify_process():
 @app.route("/predict", methods=["POST"])
 def predict():
     data = {"success": False}
+    print(flask.request.method)
 
     # ensure an image was properly uploaded to our endpoint
     if flask.request.method == "POST":
+        print(flask.request.files)
         if flask.request.files.get("image"):
-            print(flask.request.form['url'])
+            print(flask.request.form)
             # read the image in PIL format and prepare it for
             # classification
+            print('before read')
             image = flask.request.files["image"].read()
             image = Image.open(io.BytesIO(image))
             image = prepare_image(image, (IMAGE_WIDTH, IMAGE_HEIGHT))
+            print('after read')
 
             # ensure our NumPy array is C-contiguous as well,
             # otherwise we won't be able to serialize it
@@ -214,7 +255,7 @@ def predict():
             # generate an ID for the classification then add the
             # classification ID + image to the queue
             k = str(uuid.uuid4())
-            d = {"id": k, "image": base64_encode_image(image), "url":flask.request.form['url']}
+            d = {"id": k, "image": base64_encode_image(image)}
             db.rpush(IMAGE_QUEUE, json.dumps(d))
             print("dumped image to redis")
 
@@ -223,6 +264,8 @@ def predict():
             while True:
                 # attempt to grab the output predictions
                 output = db.get(k)
+                print("image id: " + k)
+                print("output: " + str(output))
                 # check to see if our model has classified the input
                 # image
                 if output is not None:
