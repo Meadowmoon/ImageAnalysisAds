@@ -82,6 +82,7 @@ def overlay():
                            flask.request.json['label'],
                            flask.request.json['result'])
         data["success"] = True
+        data["result"] = flask.request.json['result']
             
     # return the data dictionary as a JSON response
     return flask.jsonify(data)

@@ -23,14 +23,12 @@ class OverlayOp:
          
         gray = cv2.cvtColor(image, cv2.COLOR_BGR2GRAY)
         gray = cv2.GaussianBlur(gray, (5, 5), 0)
-        cv2.imwrite('gray.png', gray)
         if(self.display):
             cv2.imshow('Gray', gray)
             cv2.waitKey(0)
         
 
         edged = cv2.Canny(gray, 10, 250)
-        cv2.imwrite('edged.png', edged)
         if(self.display):
             cv2.imshow('Edged', edged)
             cv2.waitKey(0)
@@ -38,13 +36,11 @@ class OverlayOp:
         kernel = np.ones((3, 3), np.uint8)
          
         dilation = cv2.dilate(edged, kernel, iterations=1)
-        cv2.imwrite('delation.png', dilation)
         if(self.display):
             cv2.imshow('open', dilation)
             cv2.waitKey(0)
          
         closing = cv2.morphologyEx(dilation, cv2.MORPH_CLOSE, kernel)
-        cv2.imwrite('closing.png', closing)
         if(self.display):
             cv2.imshow('Closing', closing)
             cv2.waitKey(0)
@@ -52,7 +48,6 @@ class OverlayOp:
         (image, cnts, hiers) = cv2.findContours(closing, cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_SIMPLE)
          
         cont = cv2.drawContours(copy, cnts, -1, (0, 0, 0), 2, cv2.LINE_AA)
-        cv2.imwrite('contour.png', cont)
         if(self.display):
             cv2.imshow('Contours', cont)
             cv2.waitKey(0)
@@ -63,7 +58,6 @@ class OverlayOp:
         
         # remove the contours from the image and show the resulting images
         img = cv2.bitwise_and(cont, cont, mask=mask)
-        cv2.imwrite('aftermask.png', img)
         if(self.display):
             cv2.imshow("Mask", img)
             cv2.waitKey(0)
@@ -130,9 +124,3 @@ class OverlayOp:
             self.posy = src_height - overlay_height
             
         return self.OverlayImage(src, overlay, result_file)
-
-# example to use this API to overlay image
-overlayOp = OverlayOp(False)     
-#overlayOp.Operator("dog5.jpg", "dog-food.jpg", 0.2, CORNER.BOTTOM_RIGHT)
-overlayOp.Operator("cup.jpeg", "cup-label.png", "result2.png")
-cv2.destroyAllWindows() 
