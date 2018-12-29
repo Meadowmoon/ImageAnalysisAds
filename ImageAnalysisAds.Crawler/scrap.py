@@ -1,10 +1,13 @@
-import csv
 import json
 import os
-from requests_html import HTMLSession
+import requests
+import re
+from collections import Counter
+
+os.chdir('C:\\myProj\\ImageAnalysisAds\\ImageAnalysisAds.Crawler')
 
 def get_raw (URL):
-    request = HTMLSession().get(URL)
+    request = requests.get(URL)
     request = json.loads(request.text)
     jsonDump = request['graphql']['hashtag']['edge_hashtag_to_media']
     return jsonDump
@@ -16,7 +19,7 @@ def get_nextpage_url(jsonDump,BASE_URL):
     return url
 
 
-def get_post_info(jsonDump,flag_size=1): #size[0-4] = 150,240,320,480,640 
+def get_post_info(jsonDump,flag_size=1): #flag_size {0-4} = 150,240,320,480,640 
     posts = jsonDump['edges'] 
     infoDict = {} #use dict to avoid storing duplicate post
     
@@ -26,12 +29,13 @@ def get_post_info(jsonDump,flag_size=1): #size[0-4] = 150,240,320,480,640
             caption = post['node']['edge_media_to_caption']['edges'][0]['node']['text']
         except:
             caption = 'None'
-        thumbnail_url = post['node']['thumbnail_resources'][0]['src'] #0-4 = 150,240,320,480,640
+        thumbnail_url = post['node']['thumbnail_resources'][flag_size]['src'] #0-4 = 150,240,320,480,640
         
         infoDict[shortcode]=[caption,thumbnail_url]
     
     return infoDict
 
+#equivalent to main function
 def scrap_insta_info (TAG='cups', num=100, size_flag=1): #output a dict
     
     BASE_URL = 'https://www.instagram.com/explore/tags/{0}/?__a=1'.format(TAG)
@@ -59,20 +63,42 @@ def scrap_insta_info (TAG='cups', num=100, size_flag=1): #output a dict
 
 
 def download_img (scrapped_dict, TAG):
-    os.makedirs(f"{TAG}",exist_ok = True)
+    #os.makedirs(f"{TAG}",exist_ok = True)
+    os.makedirs(TAG, exist_ok = True)
     for item in scrapped_dict:
         filename = item
         url = scrapped_dict[item][1]
         
-        request = HTMLSession().get(url)
+        request = requests.get(url)
         with open("{0}/{1}.jpg".format(TAG,filename), 'wb') as f:
             f.write(request.content)
+
+def get_obj_detected (img_path):
+    result = os.popen('python classify_image.py --image_file {}'.format(img_path)).read()
+    result = re.split("\n",result)[0:5]
+    result = [re.split("[()]|= ",res)[0:3:2] for res in result]
+    result = list(zip(*result))
     
-os.chdir('C:\\myProj')
+    return result    
+
+#img_path = "workingout\BdQu5h4HYGx.jpg"
+#!set PATH=%PATH%;C:\Users\peanut\Anaconda3;C:\Users\peanut\Anaconda3\Scripts
+#!activate tensorflow1
+#!python classify_image.py --image_file "workingout/BdQu5h4HYGx.jpg"
+
+        
+    
 TAG='cups'
 
-dict_with_img_urls = scrap_insta_info (TAG=TAG, num=100, size_flag=1)
+dict_with_img_urls = scrap_insta_info (TAG=TAG, num=60, size_flag=1)
+with open("{}.json".format(TAG),"w") as f:
+    json.dump(dict_with_img_urls,f,indent=4)
+    
 download_img(dict_with_img_urls, TAG=TAG)
+
+    
+#with open("dict.json", "r") as content:
+#  y=json.load(content)
 
 '''
 ##for debug
