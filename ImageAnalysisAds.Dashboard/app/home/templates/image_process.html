@@ -16,9 +16,13 @@
                 <div class="clearfix"></div>
               </div>
               <div class="x_content">
-                  <a class="btn btn-app">
+                  <!-- <a class="btn btn-app">
                       <i class="fa fa-file-image-o"></i> Upload Image
-                  </a>
+                  </a> -->
+                  <form action="/upload" method="POST" enctype="multipart/form-data">
+                    Select a image file: <input type="file" name="image" class="btn btn-default btn-sm" accept="image/*"><br><br>
+                    <input type="submit" class="btn btn-success btn-lg" >
+                  </form>
                   <br>
                   <div class="col-md-6 col-sm-6 col-xs-12" style="border:0px solid #e5e5e5;">
                       <div class="x_panel tile">
@@ -32,7 +36,7 @@
                   <div class="col-md-6 col-sm-6 col-xs-12" style="border:0px solid #e5e5e5;">
                     <div class="x_panel tile">
                         <div class="x_title">
-                          <h4>Detected Objects</h4>
+                          <h4>Accuracy of Objects</h4>
                           <div class="clearfix"></div>
                         </div>
                         <div class="x_content">
