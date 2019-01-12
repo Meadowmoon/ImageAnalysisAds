@@ -8,7 +8,7 @@ https://blog.miguelgrinberg.com/post/the-flask-mega-tutorial-part-i-hello-world<
 
 # FAQ:
 1. How to run the application?<br/>
-Read the "Readme.txt" file in ImageAnalysisAds.Gentelella repository
+Read the "Readme.txt" file in ImageAnalysisAds.Dashboard repository
 
 # Config TensorFlow Object Detection API on Windows
 https://medium.com/@rohitrpatil/how-to-use-tensorflow-object-detection-api-on-windows-102ec8097699 <br/>
