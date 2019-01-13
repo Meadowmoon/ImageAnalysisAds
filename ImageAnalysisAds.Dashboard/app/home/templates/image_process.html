@@ -19,7 +19,7 @@
                   <!-- <a class="btn btn-app">
                       <i class="fa fa-file-image-o"></i> Upload Image
                   </a> -->
-                  <form action="/upload" method="POST" enctype="multipart/form-data">
+                  <form action="/home/upload" method="POST" enctype="multipart/form-data">
                     Select a image file: <input type="file" name="image" class="btn btn-default btn-sm" accept="image/*"><br><br>
                     <input type="submit" class="btn btn-success btn-lg" >
                   </form>
@@ -28,7 +28,11 @@
                       <div class="x_panel tile">
                           <div class="x_content">
                             <div class="product-image fixed_height_320">
-                                <img src="/static/images/cat.jpg" alt="..." />
+                                {% if original_image %}
+                                  <img src="{{ original_image }}" alt="original image" />
+                                {% else %}
+                                  Waitting for upload...
+                                {% endif %}
                             </div>
                           </div>
                         </div>
@@ -36,88 +40,31 @@
                   <div class="col-md-6 col-sm-6 col-xs-12" style="border:0px solid #e5e5e5;">
                     <div class="x_panel tile">
                         <div class="x_title">
-                          <h4>Accuracy of Objects</h4>
+                          <h4>Score of Object Detected</h4>
                           <div class="clearfix"></div>
                         </div>
                         <div class="x_content">
                           <div class="widget_summary">
                             <div class="w_left w_20">
-                              <span>cat</span>
+                              {% if object_type %}
+                                <span>{{ object_type }}</span>
+                              {% else %}
+                                <span>Unknown</span>
+                              {% endif %}
                             </div>
                             <div class="w_center w_55">
                               <div class="progress">
-                                <div class="progress-bar bg-green" role="progressbar" aria-valuenow="60" aria-valuemin="0" aria-valuemax="100" style="width: 26%;">
+                                <div class="progress-bar bg-green" role="progressbar" aria-valuenow="60" aria-valuemin="0" aria-valuemax="100" style="width: {{ score_percent }};">
                                   <span class="sr-only">60% Complete</span>
                                 </div>
                               </div>
                             </div>
                             <div class="w_right w_20">
-                              <span>1.79559</span>
-                            </div>
-                            <div class="clearfix"></div>
-                          </div>
-              
-                          <div class="widget_summary">
-                            <div class="w_left w_20">
-                              <span>feline</span>
-                            </div>
-                            <div class="w_center w_55">
-                              <div class="progress">
-                                <div class="progress-bar bg-green" role="progressbar" aria-valuenow="60" aria-valuemin="0" aria-valuemax="100" style="width: 25%;">
-                                  <span class="sr-only">60% Complete</span>
-                                </div>
-                              </div>
-                            </div>
-                            <div class="w_right w_20">
-                              <span>1.74239</span>
-                            </div>
-                            <div class="clearfix"></div>
-                          </div>
-                          <div class="widget_summary">
-                            <div class="w_left w_20">
-                              <span>domestic cat</span>
-                            </div>
-                            <div class="w_center w_55">
-                              <div class="progress">
-                                <div class="progress-bar bg-green" role="progressbar" aria-valuenow="60" aria-valuemin="0" aria-valuemax="100" style="width: 24%;">
-                                  <span class="sr-only">60% Complete</span>
-                                </div>
-                              </div>
-                            </div>
-                            <div class="w_right w_20">
-                              <span>1.71551</span>
-                            </div>
-                            <div class="clearfix"></div>
-                          </div>
-                          <div class="widget_summary">
-                            <div class="w_left w_20">
-                              <span>tabby</span>
-                            </div>
-                            <div class="w_center w_55">
-                              <div class="progress">
-                                <div class="progress-bar bg-green" role="progressbar" aria-valuenow="60" aria-valuemin="0" aria-valuemax="100" style="width: 14%;">
-                                  <span class="sr-only">60% Complete</span>
-                                </div>
-                              </div>
-                            </div>
-                            <div class="w_right w_20">
-                              <span>0.95449</span>
-                            </div>
-                            <div class="clearfix"></div>
-                          </div>
-                          <div class="widget_summary">
-                            <div class="w_left w_20">
-                              <span>domestic animal</span>
-                            </div>
-                            <div class="w_center w_55">
-                              <div class="progress">
-                                <div class="progress-bar bg-green" role="progressbar" aria-valuenow="60" aria-valuemin="0" aria-valuemax="100" style="width: 11%;">
-                                  <span class="sr-only">60% Complete</span>
-                                </div>
-                              </div>
-                            </div>
-                            <div class="w_right w_20">
-                              <span>0.77145</span>
+                              {% if score %}
+                                <span>{{ score }}</span>
+                              {% else %}
+                                <span>0</span>
+                              {% endif %}                            
                             </div>
                             <div class="clearfix"></div>
                           </div>
@@ -128,13 +75,17 @@
                   <div class="col-md-6 col-sm-6 col-xs-12" style="border:0px solid #e5e5e5;">
                       <div class="x_panel tile">
                           <div class="x_title">
-                            <h4>Image with Frames</h4>
+                            <h4>Image with Frame</h4>
                             <div class="clearfix"></div>
                           </div>
                           <div class="x_content">
                               <div class="x_content">
                                   <div class="product-image fixed_height_320">
-                                      <img src="/static/images/cat_frame.jpg" alt="..." />
+                                    {% if frame_image %}
+                                      <img src="{{ frame_image }}" alt="framed image" />
+                                    {% else %}
+                                      Waitting for upload...
+                                    {% endif %}
                                   </div>
                               </div>
                           </div>
@@ -143,7 +94,7 @@
                   <div class="col-md-6 col-sm-6 col-xs-12" style="border:0px solid #e5e5e5;">
                       <div class="x_panel tile">
                           <div class="x_title">
-                            <h4>Image with Target</h4>
+                            <h4>Image with Label</h4>
                             <div class="clearfix"></div>
                           </div>
                           <div class="x_content">

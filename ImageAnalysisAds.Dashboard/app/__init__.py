@@ -8,18 +8,25 @@ import os
 
 db = SQLAlchemy()
 login_manager = LoginManager()
-RESOURCE_FOLDER_PATH = None
+ALLOWED_EXTENSIONS = set(['png', 'jpg', 'jpeg', 'gif'])
+API_PREDICT = 'http://localhost:5002/imageads/v1.0/images/predict'
+API_OVERLAY = 'http://localhost:5003/imageads/v1.0/images/overlay'
 
-def get_resources_folder():
-    return os.path.dirname(os.getcwd()) + '\\resources'
-
-def register_folders(app, resource_folder_path):
-    UPLOAD_FOLDER = resource_folder_path+'\\img_origin'
-    app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
-
-    DB_FOLDER = resource_folder_path+'\\db'
+def register_folders(app):
+    current_dir = os.getcwd()
+    DB_FOLDER = current_dir+'\\db'
     app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///'+DB_FOLDER+"\\database.db"
 
+    image_folder = current_dir+'\\app\\base\\static\\images'
+    app.config['ORIGIN_FOLDER'] = image_folder+'\\img_origin'
+    app.config['FRAME_FOLDER'] = image_folder+'\\img_framed'
+    app.config['RESULT_FOLDER'] = image_folder+'\\img_result'
+    app.config['LABEL_FOLDER'] = image_folder+'\\label'
+
+    app.config['STATIC_ORIGIN_FOLDER'] = os.path.join('\static', 'images', 'img_origin')
+    app.config['STATIC_FRAME_FOLDER'] = os.path.join('\static', 'images', 'img_framed')
+    app.config['STATIC_RESULT_FOLDER'] = os.path.join('\static', 'images', 'img_result')
+    app.config['STATIC_LABEL_FOLDER'] = os.path.join('\static', 'images', 'label')
 
 def register_extensions(app):
     db.init_app(app)
@@ -55,9 +62,7 @@ def create_app(selenium=False):
     if selenium:
         app.config['LOGIN_DISABLED'] = True
 
-    RESOURCE_FOLDER_PATH = get_resources_folder()
-    register_folders(app, RESOURCE_FOLDER_PATH)
-
+    register_folders(app)
     register_extensions(app)
     register_blueprints(app)
     configure_database(app)
