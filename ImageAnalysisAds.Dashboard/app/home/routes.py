@@ -14,7 +14,10 @@ import cv2
 
 '''
 curl -X POST -F image=@test.jpg http://localhost:5002/imageads/v1.0/images/predict
-curl -i -H "Content-Type: application/json" -X POST -d '{"image":"cup.jpg", "label": "cup-label.jpg","result":"result.jpg"}' http://localhost:5003/imageads/v1.0/images/overlay
+curl -i -H "Content-Type: application/json" -X POST -d '{"image":"cup.jpg", "label": "cup-label.jpg","result":"result.jpg"}' http://localhost:5002/imageads/v1.0/images/overlay
+Windows：
+curl -i -H "Content-Type: application/json" -X POST -d "{\"image\":\"cup.jpg\", \"label\": \"cup-label.jpg\",\"result\":\"result.jpg\"}" http://localhost:5002/imageads/v1.0/images/overlay
+
 '''
 
 ##  Styles:
