@@ -100,7 +100,11 @@
                           <div class="x_content">
                               <div class="x_content">
                                   <div class="product-image fixed_height_320">
-                                      <img src="/static/images/cat_target.jpg" alt="..." />
+                                    {% if frame_image %}
+                                      <img src="{{ result_image }}" alt="result image" />
+                                    {% else %}
+                                      Waitting for upload...
+                                    {% endif %}
                                   </div>
                               </div>
                           </div>

@@ -56,7 +56,7 @@ class Mapping(db.Model):
 
     id = Column(Integer, primary_key=True)
     object_type = Column(String(30), nullable=False)
-    frameimage_id = Column(Integer, db.ForeignKey('Image.id'), nullable=False)
+    labelimage_id = Column(Integer, db.ForeignKey('Image.id'), nullable=False)
 
     def __repr__(self):
         return str(self.object_type)
