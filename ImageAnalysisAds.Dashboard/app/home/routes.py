@@ -60,7 +60,7 @@ def get_label_by_object(object_type):
         .filter(Image.type == 'label') \
         .first() 
     if label_image:
-        label_image_path = label_image.path
+        label_image_path = label_image.name
     else:
         return None
     return label_image_path
@@ -158,18 +158,19 @@ def upload_Image():
         ## Image table
         try:
             file_size = os.stat(originfile_path).st_size
-            ori_img_db = Image(name=new_name, size=file_size, type='Target')
+            ori_img_db = Image(name=new_name, size=file_size, type='target')
             db.session.add(ori_img_db)
 
             file_size = os.stat(framefile_path).st_size
-            frame_img_db = Image(name=frame_new_name, size=file_size, type='Frame')
+            frame_img_db = Image(name=frame_new_name, size=file_size, type='frame')
             db.session.add(frame_img_db)
 
             file_size = os.stat(result_img_path).st_size
-            result_img_db = Image(name=result_img_name, size=file_size, type='Result')
+            result_img_db = Image(name=result_img_name, size=file_size, type='result')
             db.session.add(result_img_db)
             db.session.commit()
-        except:
+        except Exception as e:
+            print(str(e))
             db.session.rollback()
             Mbox('Error', 'Error happens in updating table: image', 0)
             return redirect("image_process")
@@ -178,24 +179,42 @@ def upload_Image():
         try:
             new_img_id = Image.query.filter_by(name=new_name).first().id
             user_image = UserImage(
-                new_img_id,
-                current_user.id,
-                file.filename,
-                start_time.strftime("%Y-%m-%d %X"),
-                'PC'
+                image_id = new_img_id,
+                user_id = current_user.id,
+                origin_filename = file.filename,
+                upload_datetime = start_time.strftime("%Y-%m-%d %X"),
+                device = 'PC'
             )
             db.session.add(user_image)
             db.session.commit()
-        except:
+        except Exception as e:
+            print(str(e))
             db.session.rollback()
             Mbox('Error', 'Error happens in updating table: userimage', 0)
             return redirect("image_process")
 
         ## Activity table
+        try:
             userimage_id = UserImage.query.filter_by(image_id=new_img_id).first().id
             frame_img_id = Image.query.filter_by(name=frame_new_name).first().id
             result_img_id = Image.query.filter_by(name=result_img_name).first().id
-            process_time = str((end_time - start_time).seconds) + '.' + str(int((end_time - start_time).microseconds)/1000 )
+            process_time = str((end_time - start_time).seconds) + '.' + str(int(int((end_time - start_time).microseconds)/1000))
+            activity = Activity(
+                userimage_id = userimage_id,
+                object_type = object_type,
+                score = score,
+                result_json = detection_result.text,
+                frameimage_id = frame_img_id,
+                resultimage_id = result_img_id,
+                processtime = process_time
+            )
+            db.session.add(activity)
+            db.session.commit()
+        except Exception as e:
+            print(str(e))
+            db.session.rollback()
+            Mbox('Error', 'Error happens in updating table: activity', 0)
+            return redirect("image_process")
 
         ## Step 99. Display all images in page
         ori_image_static = os.path.join(current_app.config['STATIC_ORIGIN_FOLDER'], new_name)

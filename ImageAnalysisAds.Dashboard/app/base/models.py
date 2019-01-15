@@ -45,7 +45,7 @@ class UserImage(db.Model):
     image_id = Column(Integer, db.ForeignKey('Image.id'), nullable=False)
     user_id = Column(Integer, db.ForeignKey('User.id'), nullable=False)
     origin_filename = Column(String(120), nullable=False)
-    upload_datatime = Column(db.DateTime, nullable = False)
+    upload_datetime = Column(String(20), nullable = False)
     device = Column(String(10), nullable = False)
 
     def __repr__(self):
@@ -69,10 +69,11 @@ class Activity(db.Model):
     id = Column(Integer, primary_key=True)
     userimage_id = Column(Integer, db.ForeignKey('UserImage.id'), nullable=False)
     object_type = Column(String(30), nullable = False)
+    score = Column(String(10), nullable = False)
     result_json = Column(String(1024), nullable = False)
     frameimage_id = Column(Integer, db.ForeignKey('Image.id'), nullable=False)
     resultimage_id = Column(Integer, db.ForeignKey('Image.id'), nullable=False)
-    processtime = Column(Integer, nullable = False)
+    processtime = Column(String(10), nullable = False)
 
     def __repr__(self):
         return str(self.id)
