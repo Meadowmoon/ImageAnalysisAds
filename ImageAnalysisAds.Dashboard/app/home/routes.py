@@ -1,5 +1,10 @@
 from flask import Flask, flash, request, redirect, url_for, render_template, current_app
-from flask_login import login_required
+from flask_login import (
+    current_user,
+    login_required,
+    login_user,
+    logout_user
+)
 
 from app.base.models import *
 from app.home import blueprint
@@ -10,7 +15,8 @@ import os
 import ctypes  # An included library with Python install.   
 import requests
 import json
-import cv2
+import cv2 # 3.4.2.50
+import datetime
 
 '''
 curl -X POST -F image=@test.jpg http://localhost:5002/imageads/v1.0/images/predict
@@ -79,6 +85,7 @@ def upload_Image():
             Mbox('Error','No selected file',0)
             return redirect(request.url)
 
+        start_time = datetime.datetime.now()
         # Step 1 - Rename file and save to folder
         try:
             if file and allowed_file(file.filename):
@@ -119,7 +126,6 @@ def upload_Image():
         origin_nparray = cv2.imread(originfile_path,1)
         x1, y1, x2, y2 = calculate_coordinates(box, origin_nparray)
         img_frame = cv2.rectangle(origin_nparray, (x1,y1), (x2,y2), (0,255,0), 3)
-
         frame_new_name = new_name.replace('.'+extension,'')+'_framed.'+extension
         framefile_path = os.path.join(current_app.config['FRAME_FOLDER'], frame_new_name)
         cv2.imwrite(framefile_path,img_frame)
@@ -146,12 +152,50 @@ def upload_Image():
             Mbox('Error', 'Error happens in Overlay API', 0)
             return redirect("image_process")
 
+        end_time = datetime.datetime.now()
+
         ## Step 98 - Add records in DB, only when everything successful
-        # add image file in db
-        file_size = os.stat(originfile_path).st_size
-        image = Image(path=originfile_path, size=file_size, type='Target')
-        db.session.add(image)
-        #db.session.commit()
+        ## Image table
+        try:
+            file_size = os.stat(originfile_path).st_size
+            ori_img_db = Image(name=new_name, size=file_size, type='Target')
+            db.session.add(ori_img_db)
+
+            file_size = os.stat(framefile_path).st_size
+            frame_img_db = Image(name=frame_new_name, size=file_size, type='Frame')
+            db.session.add(frame_img_db)
+
+            file_size = os.stat(result_img_path).st_size
+            result_img_db = Image(name=result_img_name, size=file_size, type='Result')
+            db.session.add(result_img_db)
+            db.session.commit()
+        except:
+            db.session.rollback()
+            Mbox('Error', 'Error happens in updating table: image', 0)
+            return redirect("image_process")
+
+        ## UserImage table
+        try:
+            new_img_id = Image.query.filter_by(name=new_name).first().id
+            user_image = UserImage(
+                new_img_id,
+                current_user.id,
+                file.filename,
+                start_time.strftime("%Y-%m-%d %X"),
+                'PC'
+            )
+            db.session.add(user_image)
+            db.session.commit()
+        except:
+            db.session.rollback()
+            Mbox('Error', 'Error happens in updating table: userimage', 0)
+            return redirect("image_process")
+
+        ## Activity table
+            userimage_id = UserImage.query.filter_by(image_id=new_img_id).first().id
+            frame_img_id = Image.query.filter_by(name=frame_new_name).first().id
+            result_img_id = Image.query.filter_by(name=result_img_name).first().id
+            process_time = str((end_time - start_time).seconds) + '.' + str(int((end_time - start_time).microseconds)/1000 )
 
         ## Step 99. Display all images in page
         ori_image_static = os.path.join(current_app.config['STATIC_ORIGIN_FOLDER'], new_name)
