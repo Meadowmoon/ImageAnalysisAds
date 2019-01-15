@@ -222,7 +222,7 @@ def upload_Image():
         result_image_static = os.path.join(current_app.config['STATIC_RESULT_FOLDER'], result_img_name)
         score_percent = str(float(score) * 100)+'%'
         return render_template("image_process.html", original_image = ori_image_static, frame_image = frame_image_static, result_image= result_image_static \
-            , object_type = object_type, score = score, score_percent = score_percent)
+            , object_type = object_type, score = score, json= box, score_percent = score_percent)
 
     return redirect(request.url)
 
