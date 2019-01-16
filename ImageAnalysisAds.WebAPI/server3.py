@@ -16,7 +16,7 @@ from keras.preprocessing.image import img_to_array
 import os
 import tensorflow as tf
 import sys
-from object_detection.utils import label_map_util
+#from object_detection.utils import label_map_util
 
 sys.path.append('../ImageAnalysisAds.Mapper/')
 from overlayImage import *

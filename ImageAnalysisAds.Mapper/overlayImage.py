@@ -105,6 +105,8 @@ class OverlayOp:
         src_size = src_height * src_width
         overlay_size = overlay_height * overlay_width
         ratio = percentage * src_size / overlay_size
+        if ratio > 1.0 :
+            ratio = 1.0
         # Resize overlay image.
         overlay = cv2.resize(overlay, (0, 0), fx=ratio, fy=ratio) 
         overlay_height, overlay_width = overlay.shape[:2]
