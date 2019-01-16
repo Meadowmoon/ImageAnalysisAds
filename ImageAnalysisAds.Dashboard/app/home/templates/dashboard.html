@@ -79,14 +79,13 @@
           </div>
 
           <div class="col-md-12 col-sm-12 col-xs-12">
-            <div id="chart_plot_01" data-stuff='["a","b","c"]' class="demo-placeholder"></div>
+            <!--<div id="imageCountLineChart" data-stuff='["a","b","c"]' class="demo-placeholder"></div>-->
+            <canvas id="imageCountLineChart" height="46.7"></canvas>
           </div>
-
           <div class="clearfix"></div>
         </div>
       </div>
     </div>
-
     <br />
 
     <div class="row">
@@ -211,6 +210,7 @@
   {{ super()}}
   <!-- Chart.js -->
   <script src="{{ url_for('static', filename='vendors/Chart.js/dist/Chart.min.js') }}"></script>
+  <script src="{{ url_for('static', filename='vendors/Chart.js/dist/Chart.bundle.js') }}"></script>
   <!-- gauge.js -->
   <script src="{{ url_for('static', filename='vendors/gauge.js/dist/gauge.min.js') }}"></script>
   <!-- Skycons -->
@@ -241,8 +241,84 @@
     $(document).ready(function() {
         init_Devicedoughnut({{ device_htmls|tojson|safe }});
         init_UserImageBarChart({{ user_images|tojson|safe }});
+        init_LineChart();
       });	
       
+      var randomScalingFactor = function() {
+            return Math.round(Math.random() * 100);
+            //return 0;
+      };
+      var randomColorFactor = function() {
+            return Math.round(Math.random() * 255);
+        };
+      var randomColor = function(opacity) {
+          return 'rgba(' + randomColorFactor() + ',' + randomColorFactor() + ',' + randomColorFactor() + ',' + (opacity || '.3') + ')';
+      };
+
+    function init_LineChart() {
+      if ($('#imageCountLineChart').length) {
+
+        var ctx = document.getElementById("imageCountLineChart").getContext("2d");
+        document.getElementById("imageCountLineChart").hei
+        var config = {
+            type: 'line',
+            data: {
+                labels: ["January", "February", "March", "April", "May", "June", "July"],
+                datasets: [{
+                    label: "Activity Count",
+                    data: [randomScalingFactor(), randomScalingFactor(), randomScalingFactor(), randomScalingFactor(), randomScalingFactor(), randomScalingFactor(), randomScalingFactor()],
+                    fill: true
+                  }]
+            },
+            options: {
+                responsive: true,
+                title:{
+                    display:false,
+                    text:'Chart.js Line Chart'
+                },
+                tooltips: {
+                    mode: 'label',
+                    callbacks: {
+                    }
+                },
+                hover: {
+                    mode: 'dataset'
+                },
+                scales: {
+                    xAxes: [{
+                        display: true,
+                        scaleLabel: {
+                            show: true,
+                            labelString: 'Day'
+                        }
+                    }],
+                    yAxes: [{
+                        display: true,
+                        scaleLabel: {
+                            show: true,
+                            labelString: 'Value'
+                        },
+                        //ticks: {
+                        //    suggestedMin: -10,
+                        //    suggestedMax: 250,
+                        //}
+                    }]
+                }
+            }
+        };
+
+        $.each(config.data.datasets, function(i, dataset) {
+            dataset.borderColor = randomColor(0.4);
+            dataset.backgroundColor = randomColor(0.5);
+            dataset.pointBorderColor = randomColor(0.7);
+            dataset.pointBackgroundColor = randomColor(0.5);
+            dataset.pointBorderWidth = 1;
+        });
+
+        window.myLine = new Chart(ctx, config);
+      }
+    }
+
     function init_Devicedoughnut(devices) {
       if( typeof (Chart) === 'undefined'){ return; }
       
@@ -294,26 +370,13 @@
 			  var userImageBarChart = new Chart(ctx, {
           type: 'bar',
           data: {
-            //labels: ["Tom", "Jerry", "Michael", "John", "Jessica", "Natasha", "KS"],
             labels: labels_array,
             datasets: [{
             label: '# of upload',
             backgroundColor: "#26B99A",
-            //data: [92, 88, 75, 63, 46, 33, 10]
             data: data_array
             }]
-          },
-          
-          /*
-          options: {
-            scales: {
-            yAxes: [{
-              ticks: {
-              beginAtZero: false
-              }
-            }]
-            }
-          }*/
+          }
 			  });
     }
      

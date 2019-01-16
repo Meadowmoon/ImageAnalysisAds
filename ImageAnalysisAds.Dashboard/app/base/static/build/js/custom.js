@@ -456,7 +456,7 @@ if (typeof NProgress != 'undefined') {
             ticks: 8,
             tickColor: "rgba(51, 51, 51, 0.06)",
           },
-          tooltip: false
+          tooltip: true
         }
 		
 		var chart_plot_02_settings = {
@@ -547,7 +547,7 @@ if (typeof NProgress != 'undefined') {
 		};
         
 		
-        if ($("#chart_plot_01").length){
+		if ($("#chart_plot_01").length){
 			console.log('Plot1');
 			
 			$.plot( $("#chart_plot_01"), [ arr_data1, arr_data2 ],  chart_plot_01_settings );
