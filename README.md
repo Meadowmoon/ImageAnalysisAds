@@ -20,3 +20,4 @@ https://github.com/MicrosoftArchive/redis/releases
 
 # Test serving API
 https://github.com/kdung/ImageAnalysisAds/wiki/how-to-test-serving-api
+

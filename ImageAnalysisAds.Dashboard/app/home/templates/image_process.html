@@ -19,7 +19,7 @@
                   <!-- <a class="btn btn-app">
                       <i class="fa fa-file-image-o"></i> Upload Image
                   </a> -->
-                  <form action="/home/upload" method="POST" enctype="multipart/form-data">
+                  <form action="/home/upload" method="POST" enctype="multipart/form-data" onsubmit="myFunction()">
                     Select a image file: <input type="file" name="image" class="btn btn-default btn-sm" accept="image/*"><br><br>
                     <input type="submit" class="btn btn-success btn-lg" >
                   </form>
@@ -68,6 +68,15 @@
                             </div>
                             <div class="clearfix"></div>
                           </div>
+                          <div class="clearfix"></div>
+                          <div class="">
+                            <h5>Box of object (top, left, bottom, right): </h5>
+                            {% if json %}
+                              <span>{{ json }}</span>
+                            {% else %}
+                              <span></span>
+                            {% endif %}
+                          </div>
                         </div>
                       </div>
                   </div>
@@ -100,7 +109,11 @@
                           <div class="x_content">
                               <div class="x_content">
                                   <div class="product-image fixed_height_320">
-                                      <img src="/static/images/cat_target.jpg" alt="..." />
+                                    {% if frame_image %}
+                                      <img src="{{ result_image }}" alt="result image" />
+                                    {% else %}
+                                      Waitting for upload...
+                                    {% endif %}
                                   </div>
                               </div>
                           </div>
@@ -116,5 +129,15 @@
 
 {% block javascripts %}
   {{ super() }}
+  <script type="text/javascript"> 
+ 
+    // unblock when ajax activity stops 
+    $(document).ajaxStop($.unblockUI); 
+ 
+    function myFunction() {
+      $.blockUI(); 
+    }
+ 
+</script> 
 {% endblock javascripts %}
 

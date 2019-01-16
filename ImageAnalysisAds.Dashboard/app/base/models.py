@@ -29,10 +29,10 @@ class Image(db.Model):
 
     __tablename__ = 'Image'
 
-    id = Column(Integer, primary_key=True)
-    path = Column(String(120), unique=False)
-    size = Column(String(30), nullable=False)
-    type = Column(String(10))
+    id = Column(Integer, primary_key = True)
+    name = Column(String(120), unique = True, nullable = False)
+    size = Column(String(30), nullable = False)
+    type = Column(String(10), nullable = False)
 
     def __repr__(self):
         return str(self.type)
@@ -44,8 +44,9 @@ class UserImage(db.Model):
     id = Column(Integer, primary_key=True)
     image_id = Column(Integer, db.ForeignKey('Image.id'), nullable=False)
     user_id = Column(Integer, db.ForeignKey('User.id'), nullable=False)
-    upload_datatime = Column(db.DateTime)
-    device = Column(String(10))
+    origin_filename = Column(String(120), nullable=False)
+    upload_datetime = Column(String(20), nullable = False)
+    device = Column(String(10), nullable = False)
 
     def __repr__(self):
         return str(self.id)
@@ -56,7 +57,7 @@ class Mapping(db.Model):
 
     id = Column(Integer, primary_key=True)
     object_type = Column(String(30), nullable=False)
-    frameimage_id = Column(Integer, db.ForeignKey('Image.id'), nullable=False)
+    labelimage_id = Column(Integer, db.ForeignKey('Image.id'), nullable=False)
 
     def __repr__(self):
         return str(self.object_type)
@@ -67,10 +68,12 @@ class Activity(db.Model):
 
     id = Column(Integer, primary_key=True)
     userimage_id = Column(Integer, db.ForeignKey('UserImage.id'), nullable=False)
-    object_type = Column(String(30), nullable=False)
-    result_json = Column(String(1024))
+    object_type = Column(String(30), nullable = False)
+    score = Column(String(10), nullable = False)
+    result_json = Column(String(1024), nullable = False)
     frameimage_id = Column(Integer, db.ForeignKey('Image.id'), nullable=False)
-    processtime = Column(Integer)
+    resultimage_id = Column(Integer, db.ForeignKey('Image.id'), nullable=False)
+    processtime = Column(String(10), nullable = False)
 
     def __repr__(self):
         return str(self.id)

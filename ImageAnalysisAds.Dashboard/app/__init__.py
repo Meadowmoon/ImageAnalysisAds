@@ -10,7 +10,7 @@ db = SQLAlchemy()
 login_manager = LoginManager()
 ALLOWED_EXTENSIONS = set(['png', 'jpg', 'jpeg', 'gif'])
 API_PREDICT = 'http://localhost:5002/imageads/v1.0/images/predict'
-API_OVERLAY = 'http://localhost:5003/imageads/v1.0/images/overlay'
+API_OVERLAY = 'http://localhost:5002/imageads/v1.0/images/overlay'
 
 def register_folders(app):
     current_dir = os.getcwd()
