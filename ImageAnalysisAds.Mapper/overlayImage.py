@@ -1,5 +1,6 @@
 import cv2
 import numpy as np
+from math import sqrt
 
 class CORNER:
     TOP_LEFT = 1
@@ -95,7 +96,7 @@ class OverlayOp:
         
         return src
     
-    def Operator(self, src_file, overlay_file, result_file="result.png", percentage = 0.20, corner = CORNER.BOTTOM_LEFT):
+    def Operator(self, src_file, overlay_file, result_file="result.png", percentage = 0.10, corner = CORNER.BOTTOM_LEFT):
         # Load a source image
         src = cv2.imread(src_file)  
         # Load an image to overlay 
@@ -105,6 +106,7 @@ class OverlayOp:
         src_size = src_height * src_width
         overlay_size = overlay_height * overlay_width
         ratio = percentage * src_size / overlay_size
+        ratio = sqrt(ratio)
         if ratio > 1.0 :
             ratio = 1.0
         # Resize overlay image.
