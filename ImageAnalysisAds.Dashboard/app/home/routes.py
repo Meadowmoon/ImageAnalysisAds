@@ -5,6 +5,7 @@ from flask_login import (
     login_user,
     logout_user
 )
+from sqlalchemy.sql import func
 
 from app.base.models import *
 from app.home import blueprint
@@ -69,6 +70,77 @@ def get_label_by_object(object_type):
 @login_required
 def index():
     return render_template('image_process.html')
+
+@blueprint.route('/dashboard')
+@login_required
+def show_dashboard():
+    # User counts
+    total_users = "{:,}".format(User.query.count())
+
+    # Image counts
+    total_image_int = UserImage.query.count()
+    total_images = "{:,}".format(total_image_int)
+
+    # Avg time
+    avg_time = "{:.3f}".format(db.session.query(func.avg(Activity.processtime)).scalar())
+
+    # Detection Activities
+
+    # top 5 objects
+    object_counts = Activity.query.with_entities(Activity.object_type, func.count(Activity.object_type)) \
+        .group_by(Activity.object_type).all()
+    object_counts = sorted(object_counts, key=lambda x: x[1],  reverse=True)
+    if len(object_counts) > 5:
+        object_counts = object_counts[:5]
+
+    objects_htmls = []
+    for object_count in object_counts:
+        percent = '{:.1f}'.format((object_count[1]/total_image_int) * 100) + '%'
+        object_html = []
+        object_html.append(object_count[0])
+        object_html.append(object_count[1])
+        object_html.append(percent)
+        objects_htmls.append(object_html)
+    
+    # device usage
+    device_counts = UserImage.query.with_entities(UserImage.device, func.count(UserImage.device)) \
+        .group_by(UserImage.device).all()
+    device_counts = sorted(device_counts, key=lambda x: x[1],  reverse=True)
+    if len(device_counts) > 5:
+        device_counts = device_counts[:5]
+
+    i = 0
+    device_htmls = []
+    for device_count in device_counts:
+        percent = str(round(device_count[1]/total_image_int * 100)) + '%'
+        device_html = []
+        device_html.append(device_count[0])
+        device_html.append(device_count[1])
+        device_html.append(percent)
+        if i==0:
+            device_html.append("#BDC3C7")
+        if i==1:
+            device_html.append("#9B59B6")
+        if i==2:
+            device_html.append("#E74C3C")
+        if i==3:
+            device_html.append("#26B99A")
+        if i==4:
+            device_html.append("#3498DB")
+        device_htmls.append(device_html)
+        i+=1
+    
+    # Active Users
+    user_images = UserImage.query.join(User, UserImage.user_id == User.id) \
+        .with_entities(User.username, func.count(User.username)) \
+        .group_by(User.username).all()
+    user_images = sorted(user_images, key=lambda x: x[1],  reverse=True)
+    if len(user_images) > 7:
+        user_images = user_images[:7]
+
+    return render_template('dashboard.html', \
+        total_users = total_users, total_images = total_images, avg_time = avg_time, \
+        objects_htmls = objects_htmls, device_htmls = device_htmls, user_images = user_images)
 
 @blueprint.route('/upload', methods=['GET','POST'])
 @login_required
@@ -225,7 +297,6 @@ def upload_Image():
             , object_type = object_type, score = score, json= box, score_percent = score_percent)
 
     return redirect(request.url)
-
 
 @blueprint.route('/<template>')
 @login_required

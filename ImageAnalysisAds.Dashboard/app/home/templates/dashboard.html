@@ -4,6 +4,31 @@
 
 {% block stylesheets %}
   {{ super() }}
+  <style>
+      .tooltip {
+        position: relative;
+        display: inline-block;
+        border-bottom: 1px dotted black;
+      }
+      
+      .tooltiptext {
+        visibility: hidden;
+        width: 120px;
+        background-color: rgba(51, 51, 51, 0.55);
+        color: #fff;
+        text-align: center;
+        border-radius: 6px;
+        padding: 5px 0;
+      
+        /* Position the tooltip */
+        position: absolute;
+        z-index: 1;
+      }
+      
+      .progress:hover .tooltiptext {
+        visibility: visible;
+      }
+      </style>
 {% endblock stylesheets %}
 
 {% block content %}
@@ -12,15 +37,27 @@
     <div class="row tile_count">
       <div class="col-md-4 col-sm-4 col-xs-6 tile_stats_count">
         <span class="count_top"><i class="fa fa-user"></i> Total Users</span>
-        <div class="count">2,500</div>
+        {% if total_users %}
+          <div class="count">{{ total_users }}</div>
+        {% else %}
+          <div class="count">0</div>
+        {% endif %}
       </div>
       <div class="col-md-4 col-sm-4 col-xs-6 tile_stats_count">
         <span class="count_top"><i class="fa fa-file-image-o"></i> Total Images</span>
-        <div class="count green">34,334</div>
+          {% if total_images %}
+            <div class="count">{{ total_images }}</div>
+          {% else %}
+            <div class="count">0</div>
+          {% endif %}
       </div>
       <div class="col-md-4 col-sm-4 col-xs-6 tile_stats_count">
-        <span class="count_top"><i class="fa fa-clock-o"></i> Avg Process Time</span>
-        <div class="count">0.034.5</div>
+        <span class="count_top"><i class="fa fa-clock-o"></i> Avg Process Seconds</span>
+          {% if avg_time %}
+            <div class="count">{{ avg_time }}</div>
+          {% else %}
+            <div class="count">0</div>
+          {% endif %}      
       </div>
     </div>
     <!-- /top tiles -->
@@ -42,14 +79,13 @@
           </div>
 
           <div class="col-md-12 col-sm-12 col-xs-12">
-            <div id="chart_plot_01" data-stuff='["a","b","c"]' class="demo-placeholder"></div>
+            <!--<div id="imageCountLineChart" data-stuff='["a","b","c"]' class="demo-placeholder"></div>-->
+            <canvas id="imageCountLineChart" height="46.7"></canvas>
           </div>
-
           <div class="clearfix"></div>
         </div>
       </div>
     </div>
-
     <br />
 
     <div class="row">
@@ -57,92 +93,47 @@
       <div class="col-md-3 col-sm-3 col-xs-12">
         <div class="x_panel tile fixed_height_320">
           <div class="x_title">
-            <h3>Top 5 Accuracies</h3>
+            <h3>Top 5 Objects</h3>
             <div class="clearfix"></div>
           </div>
           <div class="x_content">
-            <div class="widget_summary">
-              <div class="w_left w_25">
-                <span>cup</span>
-              </div>
-              <div class="w_center w_55">
-                <div class="progress">
-                  <div class="progress-bar bg-green" role="progressbar" aria-valuenow="60" aria-valuemin="0" aria-valuemax="100" style="width: 97%;">
-                    <span class="sr-only">60% Complete</span>
+            {% if objects_htmls|length > 0 %}
+              {% for objects_html in objects_htmls %}
+                <div class="widget_summary">
+                  <div class="w_left w_25">
+                    <span>{{ objects_html[0] }}</span>
+                  </div>
+                  <div class="w_center w_55">
+                    <div class="progress">
+                      <div class="progress-bar bg-green" role="progressbar" aria-valuenow="60" aria-valuemin="0" aria-valuemax="100" style="width: {{ objects_html[2] }};">
+                        <span class="sr-only">{{ objects_html[2] }}</span>
+                      </div>
+                    </div>
+                  </div>
+                  <div class="w_right w_20">
+                    <span>{{ objects_html[1] }}</span>
+                  </div>
+                  <div class="clearfix"></div>
+                </div>
+              {% endfor %}
+            {% else %}
+              <div class="widget_summary">
+                <div class="w_left w_25">
+                  <span>unknown</span>
+                </div>
+                <div class="w_center w_55">
+                  <div class="progress">
+                    <div class="progress-bar bg-green" role="progressbar" aria-valuenow="60" aria-valuemin="0" aria-valuemax="100" style="width: 0%;">
+                      <span class="sr-only">0%</span>
+                    </div>
                   </div>
                 </div>
-              </div>
-              <div class="w_right w_20">
-                <span>97%</span>
-              </div>
-              <div class="clearfix"></div>
-            </div>
-
-            <div class="widget_summary">
-              <div class="w_left w_25">
-                <span>dog</span>
-              </div>
-              <div class="w_center w_55">
-                <div class="progress">
-                  <div class="progress-bar bg-green" role="progressbar" aria-valuenow="60" aria-valuemin="0" aria-valuemax="100" style="width: 95%;">
-                    <span class="sr-only">60% Complete</span>
-                  </div>
+                <div class="w_right w_20">
+                  <span>0%</span>
                 </div>
+                <div class="clearfix"></div>
               </div>
-              <div class="w_right w_20">
-                <span>95%</span>
-              </div>
-              <div class="clearfix"></div>
-            </div>
-            <div class="widget_summary">
-              <div class="w_left w_25">
-                <span>cat</span>
-              </div>
-              <div class="w_center w_55">
-                <div class="progress">
-                  <div class="progress-bar bg-green" role="progressbar" aria-valuenow="60" aria-valuemin="0" aria-valuemax="100" style="width: 90%;">
-                    <span class="sr-only">60% Complete</span>
-                  </div>
-                </div>
-              </div>
-              <div class="w_right w_20">
-                <span>90%</span>
-              </div>
-              <div class="clearfix"></div>
-            </div>
-            <div class="widget_summary">
-              <div class="w_left w_25">
-                <span>fish</span>
-              </div>
-              <div class="w_center w_55">
-                <div class="progress">
-                  <div class="progress-bar bg-green" role="progressbar" aria-valuenow="60" aria-valuemin="0" aria-valuemax="100" style="width: 88%;">
-                    <span class="sr-only">60% Complete</span>
-                  </div>
-                </div>
-              </div>
-              <div class="w_right w_20">
-                <span>88%</span>
-              </div>
-              <div class="clearfix"></div>
-            </div>
-            <div class="widget_summary">
-              <div class="w_left w_25">
-                <span>bird</span>
-              </div>
-              <div class="w_center w_55">
-                <div class="progress">
-                  <div class="progress-bar bg-green" role="progressbar" aria-valuenow="60" aria-valuemin="0" aria-valuemax="100" style="width: 85%;">
-                    <span class="sr-only">60% Complete</span>
-                  </div>
-                </div>
-              </div>
-              <div class="w_right w_20">
-                <span>85%</span>
-              </div>
-              <div class="clearfix"></div>
-            </div>
-
+            {% endif %}
           </div>
         </div>
       </div>
@@ -170,40 +161,28 @@
               </tr>
               <tr>
                 <td>
-                  <canvas class="canvasDoughnut" height="140" width="140" style="margin: 15px 10px 10px 0"></canvas>
+                  <canvas class="deviceDoughnut" height="140" width="140" style="margin: 15px 10px 10px 0"></canvas>
                 </td>
                 <td>
                   <table class="tile_info">
-                    <tr>
-                      <td>
-                        <p><i class="fa fa-square blue"></i>IOS </p>
-                      </td>
-                      <td>30%</td>
-                    </tr>
-                    <tr>
-                      <td>
-                        <p><i class="fa fa-square green"></i>Android </p>
-                      </td>
-                      <td>10%</td>
-                    </tr>
-                    <tr>
-                      <td>
-                        <p><i class="fa fa-square purple"></i>Windows </p>
-                      </td>
-                      <td>20%</td>
-                    </tr>
-                    <tr>
-                      <td>
-                        <p><i class="fa fa-square aero"></i>Linux </p>
-                      </td>
-                      <td>15%</td>
-                    </tr>
-                    <tr>
-                      <td>
-                        <p><i class="fa fa-square red"></i>Others </p>
-                      </td>
-                      <td>30%</td>
-                    </tr>
+                    {% if device_htmls|length > 0 %}
+                      {% for device_html in device_htmls %}
+                        <tr>
+                          <td>
+                            <p><i class="fa fa-square" style="color: {{ device_html[3] }}"></i>{{ device_html[0] }} </p>
+                          </td>
+                          <td>{{ device_html[2] }}</td>
+                        </tr>
+                      {% endfor %}
+                    {% else %}
+                      <tr>
+                        <td>
+                          <p><i class="fa fa-square"></i>unknown</p>
+                        </td>
+                        <td>0%</td>
+                      </tr>
+                    {% endif %}
+                    
                   </table>
                 </td>
               </tr>
@@ -219,7 +198,7 @@
             <div class="clearfix"></div>
           </div>
           <div class="x_content">
-            <canvas id="myDemoBarChart"></canvas>
+            <canvas id="userImageBarChart"></canvas>
           </div>
         </div>
       </div>
@@ -231,6 +210,7 @@
   {{ super()}}
   <!-- Chart.js -->
   <script src="{{ url_for('static', filename='vendors/Chart.js/dist/Chart.min.js') }}"></script>
+  <script src="{{ url_for('static', filename='vendors/Chart.js/dist/Chart.bundle.js') }}"></script>
   <!-- gauge.js -->
   <script src="{{ url_for('static', filename='vendors/gauge.js/dist/gauge.min.js') }}"></script>
   <!-- Skycons -->
@@ -251,4 +231,154 @@
   <script src="{{ url_for('static', filename='vendors/jqvmap/dist/jquery.vmap.js') }}"></script>
   <script src="{{ url_for('static', filename='vendors/jqvmap/dist/maps/jquery.vmap.world.js') }}"></script>
   <script src="{{ url_for('static', filename='vendors/jqvmap/examples/js/jquery.vmap.sampledata.js') }}"></script>
+
+  <script type="text/javascript"> 
+    // unblock when ajax activity stops 
+     
+    //$(window).load(function(){ $.blockUI(); })
+    //$(document).ready(function(){ $(document).ajaxStop($.unblockUI); })
+
+    $(document).ready(function() {
+        init_Devicedoughnut({{ device_htmls|tojson|safe }});
+        init_UserImageBarChart({{ user_images|tojson|safe }});
+        init_LineChart();
+      });	
+      
+      var randomScalingFactor = function() {
+            return Math.round(Math.random() * 100);
+            //return 0;
+      };
+      var randomColorFactor = function() {
+            return Math.round(Math.random() * 255);
+        };
+      var randomColor = function(opacity) {
+          return 'rgba(' + randomColorFactor() + ',' + randomColorFactor() + ',' + randomColorFactor() + ',' + (opacity || '.3') + ')';
+      };
+
+    function init_LineChart() {
+      if ($('#imageCountLineChart').length) {
+
+        var ctx = document.getElementById("imageCountLineChart").getContext("2d");
+        document.getElementById("imageCountLineChart").hei
+        var config = {
+            type: 'line',
+            data: {
+                labels: ["January", "February", "March", "April", "May", "June", "July"],
+                datasets: [{
+                    label: "Activity Count",
+                    data: [randomScalingFactor(), randomScalingFactor(), randomScalingFactor(), randomScalingFactor(), randomScalingFactor(), randomScalingFactor(), randomScalingFactor()],
+                    fill: true
+                  }]
+            },
+            options: {
+                responsive: true,
+                title:{
+                    display:false,
+                    text:'Chart.js Line Chart'
+                },
+                tooltips: {
+                    mode: 'label',
+                    callbacks: {
+                    }
+                },
+                hover: {
+                    mode: 'dataset'
+                },
+                scales: {
+                    xAxes: [{
+                        display: true,
+                        scaleLabel: {
+                            show: true,
+                            labelString: 'Day'
+                        }
+                    }],
+                    yAxes: [{
+                        display: true,
+                        scaleLabel: {
+                            show: true,
+                            labelString: 'Value'
+                        },
+                        //ticks: {
+                        //    suggestedMin: -10,
+                        //    suggestedMax: 250,
+                        //}
+                    }]
+                }
+            }
+        };
+
+        $.each(config.data.datasets, function(i, dataset) {
+            dataset.borderColor = randomColor(0.4);
+            dataset.backgroundColor = randomColor(0.5);
+            dataset.pointBorderColor = randomColor(0.7);
+            dataset.pointBackgroundColor = randomColor(0.5);
+            dataset.pointBorderWidth = 1;
+        });
+
+        window.myLine = new Chart(ctx, config);
+      }
+    }
+
+    function init_Devicedoughnut(devices) {
+      if( typeof (Chart) === 'undefined'){ return; }
+      
+      var labels_array = []
+      var data_array = []
+
+      for (i=0; i< devices.length; i++){
+          labels_array.push(devices[i][0])
+          data_array.push(devices[i][1])
+      }
+
+      if ($('.deviceDoughnut').length) {
+        var chart_doughnut_settings = {
+            type: 'doughnut',
+            tooltipFillColor: "rgba(51, 51, 51, 0.55)",
+            data: {
+              labels: labels_array,
+              datasets: [{
+                data: data_array,
+                backgroundColor: ["#BDC3C7","#9B59B6","#E74C3C","#26B99A","#3498DB"],
+                hoverBackgroundColor: ["#CFD4D8","#B370CF","#E95E4F","#36CAAB","#49A9EA"]
+              }]
+            },
+            options: { 
+              legend: false, 
+              responsive: false 
+            }
+          }
+        
+        $('.deviceDoughnut').each(function(){
+          var chart_element = $(this);
+          var chart_doughnut = new Chart( chart_element, chart_doughnut_settings);
+        });			
+      }  
+    };
+
+    function init_UserImageBarChart(user_images) {
+      console.log(user_images);
+
+      var labels_array = []
+      var data_array = []
+
+      for (i=0; i< user_images.length; i++){
+          labels_array.push(user_images[i][0])
+          data_array.push(user_images[i][1])
+      }
+
+      var ctx = document.getElementById("userImageBarChart");
+			  var userImageBarChart = new Chart(ctx, {
+          type: 'bar',
+          data: {
+            labels: labels_array,
+            datasets: [{
+            label: '# of upload',
+            backgroundColor: "#26B99A",
+            data: data_array
+            }]
+          }
+			  });
+    }
+     
+  </script> 
 {% endblock javascripts %}
