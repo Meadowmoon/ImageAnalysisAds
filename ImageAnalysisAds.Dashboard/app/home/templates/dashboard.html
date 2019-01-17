@@ -71,7 +71,7 @@
               <h3>Detection Activities <small>By total users per day</small></h3>
             </div>
             <div class="col-md-6">
-              <div id="reportrange" class="pull-right" style="background: #fff; cursor: pointer; padding: 5px 10px; border: 1px solid #ccc">
+              <div id="myReportrange" class="pull-right" style="background: #fff; cursor: pointer; padding: 5px 10px; border: 1px solid #ccc">
                 <i class="glyphicon glyphicon-calendar fa fa-calendar"></i>
                 <span>December 30, 2014 - January 28, 2015</span> <b class="caret"></b>
               </div>
@@ -239,9 +239,10 @@
     //$(document).ready(function(){ $(document).ajaxStop($.unblockUI); })
 
     $(document).ready(function() {
+        init_myDaterangepicker();
         init_Devicedoughnut({{ device_htmls|tojson|safe }});
         init_UserImageBarChart({{ user_images|tojson|safe }});
-        init_LineChart( {{ date_images_htmls|tojson|safe}});
+        init_LineChart( {{ date_images_htmls|tojson|safe }});
       });	
       
       var randomScalingFactor = function() {
@@ -255,73 +256,73 @@
           return 'rgba(' + randomColorFactor() + ',' + randomColorFactor() + ',' + randomColorFactor() + ',' + (opacity || '.3') + ')';
       };
 
-    function init_LineChart(date_images_htmls) {
-      if ($('#imageCountLineChart').length) {
-
-      var labels_array = []
-      var data_array = []
-
-      for (i=0; i< date_images_htmls.length; i++){
-          labels_array.push(date_images_htmls[i][0])
-          data_array.push(date_images_htmls[i][1])
-      }
-          var ctx = document.getElementById("imageCountLineChart").getContext("2d");
-          document.getElementById("imageCountLineChart").hei
-          var config = {
-              type: 'line',
-              data: {
-                  //labels: ["January", "February", "March", "April", "May", "June", "July"],
-                  labels: labels_array,
-                  datasets: [{
-                      label: "Activity Count",
-                      //data: [randomScalingFactor(), randomScalingFactor(), randomScalingFactor(), randomScalingFactor(), randomScalingFactor(), randomScalingFactor(), randomScalingFactor()],
-                      data: data_array,
-                      fill: true
-                    }]
+      var ctx = document.getElementById("imageCountLineChart").getContext("2d");
+      var config = {
+          type: 'line',
+          data: {
+              labels: [],
+              datasets: [{
+                  label: "Activity Count",
+                  data: [],
+                  fill: true
+                }]
+          },
+          options: {
+              responsive: true,
+              title:{
+                  display:false,
+                  text:'Chart.js Line Chart'
               },
-              options: {
-                  responsive: true,
-                  title:{
-                      display:false,
-                      text:'Chart.js Line Chart'
-                  },
-                  tooltips: {
-                      mode: 'label',
-                      callbacks: {
-                      }
-                  },
-                  hover: {
-                      mode: 'dataset'
-                  },
-                  scales: {
-                      xAxes: [{
-                          display: true,
-                          scaleLabel: {
-                              show: true,
-                              labelString: 'Day'
-                          }
-                      }],
-                      yAxes: [{
-                          display: true,
-                          scaleLabel: {
-                              show: true,
-                              labelString: 'Value'
-                          }
-                      }]
+              tooltips: {
+                  mode: 'label',
+                  callbacks: {
                   }
+              },
+              hover: {
+                  mode: 'dataset'
+              },
+              scales: {
+                  xAxes: [{
+                      display: true,
+                      scaleLabel: {
+                          show: true,
+                          labelString: 'Day'
+                      }
+                  }],
+                  yAxes: [{
+                      display: true,
+                      scaleLabel: {
+                          show: true,
+                          labelString: 'Value'
+                      }
+                  }]
               }
-          };
+          }
+      };
 
-          $.each(config.data.datasets, function(i, dataset) {
-              dataset.borderColor = randomColor(0.4);
-              dataset.backgroundColor = randomColor(0.5);
-              dataset.pointBorderColor = randomColor(0.7);
-              dataset.pointBackgroundColor = randomColor(0.5);
-              dataset.pointBorderWidth = 1;
-          });
+      function init_LineChart(date_images_htmls) {
+        if ($('#imageCountLineChart').length) {
 
-          window.myLine = new Chart(ctx, config);
-        
+        var labels_array = []
+        var data_array = []
+
+        for (i=0; i< date_images_htmls.length; i++){
+            labels_array.push(date_images_htmls[i][0])
+            data_array.push(date_images_htmls[i][1])
+        }
+
+        config.data.labels=labels_array;
+        config.data.datasets[0].data = data_array;
+
+        $.each(config.data.datasets, function(i, dataset) {
+            dataset.borderColor = randomColor(0.4);
+            dataset.backgroundColor = randomColor(0.5);
+            dataset.pointBorderColor = randomColor(0.7);
+            dataset.pointBackgroundColor = randomColor(0.5);
+            dataset.pointBorderWidth = 1;
+        });
+
+        window.myLine = new Chart(ctx, config);
       }
     }
 
@@ -330,7 +331,6 @@
       
       var labels_array = []
       var data_array = []
-
       for (i=0; i< devices.length; i++){
           labels_array.push(devices[i][0])
           data_array.push(devices[i][1])
@@ -383,6 +383,104 @@
           }
 			  });
     }
+
+    /* DATERANGEPICKER */ 
+		function init_myDaterangepicker() {
+
+      if( typeof ($.fn.daterangepicker) === 'undefined'){ return; }
+      var cb = function(start, end, label) {
+        console.log(start.toISOString(), end.toISOString(), label);
+        $('#myReportrange span').html(start.format('MMMM D, YYYY') + ' - ' + end.format('MMMM D, YYYY'));
+      };
+
+      var optionSet1 = {
+        startDate: moment().subtract(6, 'days'),
+        endDate: moment(),
+        minDate: '01/01/2000',
+        maxDate: '12/31/2050',
+        dateLimit: {
+        days: 60
+        },
+        showDropdowns: true,
+        showWeekNumbers: true,
+        timePicker: false,
+        timePickerIncrement: 1,
+        timePicker12Hour: true,
+        ranges: {},
+        opens: 'left',
+        buttonClasses: ['btn btn-default'],
+        applyClass: 'btn-small btn-primary',
+        cancelClass: 'btn-small',
+        format: 'YYYY-MM-DD',
+        separator: ' to ',
+        locale: {
+        applyLabel: 'Submit',
+        cancelLabel: 'Clear',
+        fromLabel: 'From',
+        toLabel: 'To',
+        customRangeLabel: 'Custom',
+        daysOfWeek: ['Su', 'Mo', 'Tu', 'We', 'Th', 'Fr', 'Sa'],
+        monthNames: ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'],
+        firstDay: 1
+        }
+      };
+
+      $('#myReportrange span').html(moment().subtract(6, 'days').format('MMMM D, YYYY') + ' - ' + moment().format('MMMM D, YYYY'));
+      $('#myReportrange').daterangepicker(optionSet1, cb);
+      $('#myReportrange').on('show.daterangepicker', function() {
+        console.log("show event fired");
+      });
+      $('#myReportrange').on('hide.daterangepicker', function() {
+        console.log("hide event fired");
+      });
+      $('#myReportrange').on('apply.daterangepicker', function(ev, picker) {
+        console.log("apply event fired, start/end dates are " + picker.startDate.format('MMMM D, YYYY') + " to " + picker.endDate.format('MMMM D, YYYY'));
+        var startDate = picker.startDate.format('YYYY-MM-DD');
+        var endDate = picker.endDate.format('YYYY-MM-DD');
+        $.ajax({
+            type:"GET",
+            url:"/home/customrange",
+            contentType:"application/json; charset=utf-8",
+            data:{'startDate':startDate,'endDate':endDate},
+            success:function (data) {  
+              var data = JSON.parse(data);
+              var labels_array = []
+              var data_array = []
+              for (i=0; i< data.length; i++) {
+                labels_array.push(data[i][0])
+                data_array.push(data[i][1])
+              }
+              config.data.labels=labels_array;
+              config.data.datasets[0].data = data_array;
+
+              $.each(config.data.datasets, function(i, dataset) {
+                  dataset.borderColor = randomColor(0.4);
+                  dataset.backgroundColor = randomColor(0.5);
+                  dataset.pointBorderColor = randomColor(0.7);
+                  dataset.pointBackgroundColor = randomColor(0.5);
+                  dataset.pointBorderWidth = 1;
+              });
+
+              window.myLine.update();            
+            },
+            failure:function (errMsg) {
+            }
+        });
+
+      });
+      $('#myReportrange').on('cancel.daterangepicker', function(ev, picker) {
+        console.log("cancel event fired");
+      });
+      $('#options1').click(function() {
+        $('#myReportrange').data('daterangepicker').setOptions(optionSet1, cb);
+      });
+      $('#options2').click(function() {
+        $('#myReportrange').data('daterangepicker').setOptions(optionSet2, cb);
+      });
+      $('#destroy').click(function() {
+        $('#myReportrange').data('daterangepicker').remove();
+      });
+  }
      
   </script> 
 {% endblock javascripts %}

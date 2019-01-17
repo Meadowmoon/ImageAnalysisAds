@@ -67,10 +67,35 @@ def get_label_by_object(object_type):
         return None
     return label_image_path
 
+def get_count_by_daterange(start_day, tomorrow):
+    date_images = UserImage.query.with_entities(UserImage.upload_datetime).filter(UserImage.upload_datetime >= start_day) \
+        .filter(UserImage.upload_datetime < tomorrow).all() 
+
+    date_images_static = {}
+    date_images_htmls = []
+    for date_image in date_images:
+        date = date_image[0].strftime('%Y-%m-%d')
+        if date in date_images_static:
+            date_images_static[date] += 1
+        else:
+            date_images_static[date] = 1
+    for key, value in date_images_static.items():
+        temp = [key,value]
+        date_images_htmls.append(temp)
+    return date_images_htmls
+
 @blueprint.route('/index')
 @login_required
 def index():
     return render_template('image_process.html')
+
+@blueprint.route('/customrange', methods=['GET'])
+@login_required
+def show_customrange():
+    start_date = datetime.strptime(request.args.get('startDate'), '%Y-%m-%d')
+    end_date = datetime.strptime(request.args.get('endDate'), '%Y-%m-%d')
+    date_images_htmls = get_count_by_daterange(start_date, end_date + timedelta(days=1))
+    return json.dumps(date_images_htmls)
 
 @blueprint.route('/dashboard')
 @login_required
@@ -89,20 +114,7 @@ def show_dashboard():
     today = datetime.now().date()
     tomorrow = today + timedelta(days=1)
     start_day = today - timedelta(days=6)
-    date_images = UserImage.query.with_entities(UserImage.upload_datetime).filter(UserImage.upload_datetime >= start_day) \
-        .filter(UserImage.upload_datetime < tomorrow).all() 
-
-    date_images_static = {}
-    date_images_htmls = []
-    for date_image in date_images:
-        date = date_image[0].strftime("%Y-%m-%d")
-        if date in date_images_static:
-            date_images_static[date] += 1
-        else:
-            date_images_static[date] = 1
-    for key, value in date_images_static.items():
-        temp = [key,value]
-        date_images_htmls.append(temp)
+    date_images_htmls = get_count_by_daterange(start_day, tomorrow)
 
     # top 5 objects
     object_counts = Activity.query.with_entities(Activity.object_type, func.count(Activity.object_type)) \
