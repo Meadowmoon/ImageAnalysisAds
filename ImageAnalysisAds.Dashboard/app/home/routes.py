@@ -6,6 +6,7 @@ from flask_login import (
     logout_user
 )
 from sqlalchemy.sql import func
+import sqlalchemy
 
 from app.base.models import *
 from app.home import blueprint
@@ -17,7 +18,7 @@ import ctypes  # An included library with Python install.
 import requests
 import json
 import cv2 # 3.4.2.50
-import datetime
+from datetime import datetime, timedelta, date
 
 '''
 curl -X POST -F image=@test.jpg http://localhost:5002/imageads/v1.0/images/predict
@@ -85,6 +86,23 @@ def show_dashboard():
     avg_time = "{:.3f}".format(db.session.query(func.avg(Activity.processtime)).scalar())
 
     # Detection Activities
+    today = datetime.now().date()
+    tomorrow = today + timedelta(days=1)
+    start_day = today - timedelta(days=6)
+    date_images = UserImage.query.with_entities(UserImage.upload_datetime).filter(UserImage.upload_datetime >= start_day) \
+        .filter(UserImage.upload_datetime < tomorrow).all() 
+
+    date_images_static = {}
+    date_images_htmls = []
+    for date_image in date_images:
+        date = date_image[0].strftime("%Y-%m-%d")
+        if date in date_images_static:
+            date_images_static[date] += 1
+        else:
+            date_images_static[date] = 1
+    for key, value in date_images_static.items():
+        temp = [key,value]
+        date_images_htmls.append(temp)
 
     # top 5 objects
     object_counts = Activity.query.with_entities(Activity.object_type, func.count(Activity.object_type)) \
@@ -139,7 +157,7 @@ def show_dashboard():
         user_images = user_images[:7]
 
     return render_template('dashboard.html', \
-        total_users = total_users, total_images = total_images, avg_time = avg_time, \
+        total_users = total_users, total_images = total_images, avg_time = avg_time, date_images_htmls=date_images_htmls, \
         objects_htmls = objects_htmls, device_htmls = device_htmls, user_images = user_images)
 
 @blueprint.route('/upload', methods=['GET','POST'])
@@ -157,7 +175,7 @@ def upload_Image():
             Mbox('Error','No selected file',0)
             return redirect(request.url)
 
-        start_time = datetime.datetime.now()
+        start_time = datetime.now()
         # Step 1 - Rename file and save to folder
         try:
             if file and allowed_file(file.filename):
@@ -224,7 +242,7 @@ def upload_Image():
             Mbox('Error', 'Error happens in Overlay API', 0)
             return redirect("image_process")
 
-        end_time = datetime.datetime.now()
+        end_time = datetime.now()
 
         ## Step 98 - Add records in DB, only when everything successful
         ## Image table
@@ -254,7 +272,7 @@ def upload_Image():
                 image_id = new_img_id,
                 user_id = current_user.id,
                 origin_filename = file.filename,
-                upload_datetime = start_time.strftime("%Y-%m-%d %X"),
+                upload_datetime = start_time,
                 device = 'PC'
             )
             db.session.add(user_image)

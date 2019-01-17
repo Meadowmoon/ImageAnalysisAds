@@ -45,7 +45,7 @@ class UserImage(db.Model):
     image_id = Column(Integer, db.ForeignKey('Image.id'), nullable=False)
     user_id = Column(Integer, db.ForeignKey('User.id'), nullable=False)
     origin_filename = Column(String(120), nullable=False)
-    upload_datetime = Column(String(20), nullable = False)
+    upload_datetime = Column(DateTime, nullable = False)
     device = Column(String(10), nullable = False)
 
     def __repr__(self):
