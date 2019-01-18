@@ -5,6 +5,7 @@ from flask_sqlalchemy import SQLAlchemy
 from importlib import import_module
 from logging import basicConfig, DEBUG, getLogger, StreamHandler
 import os
+import pymysql
 
 db = SQLAlchemy()
 login_manager = LoginManager()
@@ -15,7 +16,8 @@ API_OVERLAY = 'http://localhost:5002/imageads/v1.0/images/overlay'
 def register_folders(app):
     current_dir = os.getcwd()
     DB_FOLDER = current_dir+'\\db'
-    app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///'+DB_FOLDER+"\\database.db"
+    #app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///'+DB_FOLDER+"\\database.db"
+    app.config['SQLALCHEMY_DATABASE_URI'] = 'mysql+pymysql://db_account:db_password@imageadsdb.czhlyfstxome.ap-southeast-1.rds.amazonaws.com/imageadsdb'
 
     image_folder = current_dir+'\\app\\base\\static\\images'
     app.config['ORIGIN_FOLDER'] = image_folder+'\\img_origin'
