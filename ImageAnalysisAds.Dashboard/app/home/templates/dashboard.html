@@ -291,9 +291,13 @@
                   }],
                   yAxes: [{
                       display: true,
+                      ticks:{
+                        beginAtZero: true,
+                        //stepSize: 1
+                      },
                       scaleLabel: {
                           show: true,
-                          labelString: 'Value'
+                          labelString: 'Value',
                       }
                   }]
               }
@@ -380,6 +384,15 @@
             backgroundColor: "#26B99A",
             data: data_array
             }]
+          },
+          options: {
+            scales: {
+              yAxes: [{
+                  ticks: {
+                      beginAtZero:true
+                  }
+              }]
+            }
           }
 			  });
     }
