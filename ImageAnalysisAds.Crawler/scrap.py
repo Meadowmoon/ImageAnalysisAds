@@ -2,7 +2,6 @@ import json
 import os
 import requests
 import re
-from collections import Counter
 
 os.chdir('C:\\myProj\\ImageAnalysisAds\\ImageAnalysisAds.Crawler')
 
@@ -72,25 +71,11 @@ def download_img (scrapped_dict, TAG):
         request = requests.get(url)
         with open("{0}/{1}.jpg".format(TAG,filename), 'wb') as f:
             f.write(request.content)
-
-def get_obj_detected (img_path):
-    result = os.popen('python classify_image.py --image_file {}'.format(img_path)).read()
-    result = re.split("\n",result)[0:5]
-    result = [re.split("[()]|= ",res)[0:3:2] for res in result]
-    result = list(zip(*result))
     
-    return result    
-
-#img_path = "workingout\BdQu5h4HYGx.jpg"
-#!set PATH=%PATH%;C:\Users\peanut\Anaconda3;C:\Users\peanut\Anaconda3\Scripts
-#!activate tensorflow1
-#!python classify_image.py --image_file "workingout/BdQu5h4HYGx.jpg"
-
-        
     
 TAG='cups'
 
-dict_with_img_urls = scrap_insta_info (TAG=TAG, num=60, size_flag=1)
+dict_with_img_urls = scrap_insta_info (TAG=TAG, num=1500, size_flag=1)
 with open("{}.json".format(TAG),"w") as f:
     json.dump(dict_with_img_urls,f,indent=4)
     

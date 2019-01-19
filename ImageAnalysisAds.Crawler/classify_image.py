@@ -40,6 +40,7 @@ import os.path
 import re
 import sys
 import tarfile
+import pandas as pd
 
 import numpy as np
 from six.moves import urllib
@@ -139,6 +140,9 @@ def run_inference_on_image(image):
   if not tf.gfile.Exists(image):
     tf.logging.fatal('File does not exist %s', image)
   image_data = tf.gfile.FastGFile(image, 'rb').read()
+  
+  
+  print (image)
 
   # Creates graph from saved GraphDef.
   create_graph()
@@ -161,11 +165,14 @@ def run_inference_on_image(image):
     node_lookup = NodeLookup()
 
     top_k = predictions.argsort()[-FLAGS.num_top_predictions:][::-1]
+    result=[]       
     for node_id in top_k:
       human_string = node_lookup.id_to_string(node_id)
       score = predictions[node_id]
       print('%s (score = %.5f)' % (human_string, score))
-
+      result.append( [human_string, score])
+    
+    return result
 
 def maybe_download_and_extract():
   """Download and extract model tar file."""
@@ -188,11 +195,17 @@ def maybe_download_and_extract():
 
 def main(_):
   maybe_download_and_extract()
-  image = (FLAGS.image_file if FLAGS.image_file else
-           os.path.join(FLAGS.model_dir, 'cropped_panda.jpg'))
-  run_inference_on_image(image)
+#  image = (FLAGS.image_file if FLAGS.image_file else
+#           os.path.join(FLAGS.model_dir, 'cropped_panda.jpg'))
 
+  img_paths = [os.path.join(FLAGS.tag,img) for img in os.listdir(FLAGS.tag)]
+  result=[]
+  for image in img_paths:
+      result = result + (run_inference_on_image(image))
 
+  res = pd.DataFrame(result)
+  res.to_csv('{}_result.csv'.format(FLAGS.tag), index=False, header=False)
+ 
 if __name__ == '__main__':
   parser = argparse.ArgumentParser()
   # classify_image_graph_def.pb:
@@ -211,11 +224,17 @@ if __name__ == '__main__':
       imagenet_2012_challenge_label_map_proto.pbtxt.\
       """
   )
+#  parser.add_argument(
+#      '--image_file',
+#      type=str,
+#      default='',
+#      help='Absolute path to image file.'
+#  )
   parser.add_argument(
-      '--image_file',
+      '--tag',
       type=str,
-      default='',
-      help='Absolute path to image file.'
+      default='cups_12pic',
+      help='path to image files'
   )
   parser.add_argument(
       '--num_top_predictions',
