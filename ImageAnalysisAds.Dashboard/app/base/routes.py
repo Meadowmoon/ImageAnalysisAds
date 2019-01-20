@@ -60,7 +60,7 @@ def login():
             login_form=login_form,
             create_account_form=create_account_form
         )
-    return redirect(url_for('home_blueprint.index'))
+    return redirect(url_for('home_blueprint.image_process'))
 
 
 @blueprint.route('/logout')

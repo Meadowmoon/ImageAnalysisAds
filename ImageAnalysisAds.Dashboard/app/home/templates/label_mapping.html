@@ -1,0 +1,97 @@
+{% extends "base_site.html" %}
+
+{% block title %} Label Mapping {% endblock title %}
+
+{% block stylesheets %}
+  {{ super() }}
+{% endblock stylesheets %}
+
+{% block content %}
+    <div class="right_col" role="main">
+      <div class="row">
+          <div class="col-md-12 col-sm-12 col-xs-12">
+            <div class="x_panel">
+              <div class="x_title">
+                <h2>Label Mapping</h2>
+                <div class="clearfix"></div>
+              </div>
+              <div class="x_content">
+                  <form action="/home/post_mapping" method="POST" enctype="multipart/form-data">
+                    <input type="submit" class="btn btn-success btn-lg" >
+                    <br>
+                    <div class="col-md-6 col-sm-6 col-xs-12" style="border:0px solid #e5e5e5;">
+                        <div class="x_panel tile">
+                            <div class="x_title">
+                                <h4>Object Type</h4>
+                                <div class="clearfix"></div>
+                            </div>                        
+                            <div class="x_content">
+                              <div class="product-image" style="height: 360px">
+                                  <input type="text" name="object_type" class="form-control" placeholder="Default Input" value="cups" readonly>
+                              </div>
+                            </div>
+                          </div>
+                      </div>
+                    <div class="col-md-6 col-sm-6 col-xs-12" style="border:0px solid #e5e5e5;">
+                        <div class="x_panel tile">
+                            <div class="x_title">
+                              <h4>Available Label Images</h4>
+                              <div class="clearfix"></div>
+                            </div>
+                            <div class="x_content">
+                                <div class="x_content">
+                                    <div >
+                                        <select id="labelOptions" name="labelOptions" class="form-control" required="required" onchange="displayLabel();">
+                                        </select>
+                                    </div>
+                                    <div class="clearfix"></div>
+                                    <div class="product-image fixed_height_320">
+                                      <img id="myLabel" src="" alt="Waitting for selection..." />
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="clearfix"></div>
+                  </form>
+              </div>
+            </div>
+          </div>
+      </div>
+    </div>
+{% endblock content %}
+
+{% block javascripts %}
+  {{ super() }}
+  <script type="text/javascript"> 
+
+  $(document).ready(function(){
+
+    $.ajax({
+            type:"GET",
+            url:"/home/get_labels",
+            contentType:"application/json; charset=utf-8",
+            data:'',
+            success:function (data) {  
+              var options = JSON.parse(data);
+              var select = document.getElementById("labelOptions");
+              for (i =0; i< options.length; i++){
+                select.options[i] =  new Option(options[i], options[i]);
+              }
+              displayLabel();
+            },
+            failure:function (errMsg) {
+              alert('No label images found');
+            }
+        });
+  });
+
+  function displayLabel() {
+      var value = document.getElementById("labelOptions").value;
+      var imageControl = document.getElementById("myLabel");
+      imageControl.src = "/static/images/label/"+value;
+  }
+ 
+</script> 
+{% endblock javascripts %}
+
