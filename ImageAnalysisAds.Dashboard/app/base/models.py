@@ -78,6 +78,17 @@ class Activity(db.Model):
     def __repr__(self):
         return str(self.id)
 
+class AppConfig(db.Model):
+
+    __tablename__ = 'AppConfig'
+
+    id = Column(Integer, primary_key=True)
+    ConfigName = Column(String(256), nullable=False, unique = True)
+    ConfigValue = Column(String(256), nullable = False)
+
+    def __repr__(self):
+        return str(self.id)
+
 @login_manager.user_loader
 def user_loader(id):
     return User.query.filter_by(id=id).first()

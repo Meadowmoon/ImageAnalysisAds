@@ -19,6 +19,7 @@ import requests
 import json
 import cv2 # 3.4.2.50
 from datetime import datetime, timedelta, date
+from clarifai.rest import ClarifaiApp
 
 '''
 curl -X POST -F image=@test.jpg http://localhost:5002/imageads/v1.0/images/predict
@@ -83,6 +84,21 @@ def get_count_by_daterange(start_day, tomorrow):
         temp = [key,value]
         date_images_htmls.append(temp)
     return date_images_htmls
+
+def is_cup_contained(file_path):
+    clarifai_key = AppConfig.query.filter_by(ConfigName = 'ClarifaiKey').first().ConfigValue
+    clarifai_app = ClarifaiApp(api_key=clarifai_key)
+    model = clarifai_app.public_models.general_model
+    response = model.predict_by_filename(file_path)
+    if response:
+        if response['status']['code']==10000:
+            concepts = response['outputs'][0]['data']['concepts']
+            for concept in concepts:
+                if (concept['name'].lower() == 'cup') or (concept['name'].lower() == 'mug') or (concept['name'].lower() == 'teacup'):
+                    return True
+            else:
+                return False
+    return False
 
 @blueprint.route('/get_labels', methods=['GET'])
 @login_required
@@ -215,13 +231,13 @@ def upload_Image():
         # check if the post request has the file part
         if 'image' not in request.files:
             Mbox('Error','No file part',0)
-            return redirect(request.url)
+            return redirect("image_process")
         file = request.files['image']
         # if user does not select file, browser also
         # submit an empty part without filename
         if file.filename == '':
             Mbox('Error','No selected file',0)
-            return redirect(request.url)
+            return redirect("image_process")
 
         start_time = datetime.now()
         # Step 1 - Rename file and save to folder
@@ -233,13 +249,20 @@ def upload_Image():
                 file.save(originfile_path)
             else:
                 Mbox('Error', 'File is not a image', 0)
-                return redirect(request.url)
+                return redirect("image_process")
 
         except:
             Mbox('Error', 'Error happens in uploading file', 0)
-            return redirect(request.url)
+            return redirect("image_process")
         
         # Step 2 - Invoke API to detect object to get json
+        app_config_API = AppConfig.query.filter_by(ConfigName = 'ExternalObjectDetectionAPIMode').first().ConfigValue
+        if app_config_API == 'Enable':
+            cup_contained = is_cup_contained(originfile_path)            
+            if not cup_contained:
+                Mbox('Info', 'No cups detected', 0)
+                return redirect("image_process")
+
         detection_json = {'image': open(originfile_path, 'rb')}
         try:
             detection_result = requests.post(API_PREDICT, files=detection_json)
@@ -360,9 +383,9 @@ def upload_Image():
         result_image_static = os.path.join(current_app.config['STATIC_RESULT_FOLDER'], result_img_name)
         score_percent = str(float(score) * 100)+'%'
         return render_template("image_process.html", original_image = ori_image_static, frame_image = frame_image_static, result_image= result_image_static \
-            , object_type = object_type, score = score, json= box, score_percent = score_percent)
+            , object_type = object_type, score = '{:.2f}'.format(float(score)), json= box, score_percent = score_percent)
 
-    return redirect(request.url)
+    return redirect("image_process")
 
 @blueprint.route('/<template>')
 @login_required
