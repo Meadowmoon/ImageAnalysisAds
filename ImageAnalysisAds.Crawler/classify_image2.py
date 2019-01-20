@@ -173,7 +173,7 @@ def run_inference_on_image(image):
       human_string = node_lookup.id_to_string(node_id)
       score = predictions[node_id]
       print('%s (score = %.5f)' % (human_string, score))
-      result.append( [human_string, score])   
+      result.append(human_string)   
       
     return result
 
@@ -197,23 +197,20 @@ def maybe_download_and_extract():
 
 
 def main(_):
-#  maybe_download_and_extract()
-#  image = (FLAGS.image_file if FLAGS.image_file else
-#           os.path.join(FLAGS.model_dir, 'cropped_panda.jpg'))
+  maybe_download_and_extract()
+  image = (FLAGS.image_file if FLAGS.image_file else
+           os.path.join(FLAGS.model_dir, 'cropped_panda.jpg'))
 
-  img_paths = [os.path.join(FLAGS.tag,img) for img in os.listdir(FLAGS.tag)]
-  result=[]
-  for ind,image in enumerate(img_paths):
-      result = result + (run_inference_on_image(image))
+  keywordList={'glass','mug','cup','coffee'}
+  result = run_inference_on_image(image)
       
-      if ind%10==9:
-          res = pd.DataFrame(result)
-          res.to_csv('{}_result_{}.csv'.format(FLAGS.tag,ind), index=False, header=False)
-          result=[]
-
-  res = pd.DataFrame(result)
-  res.to_csv('{}_result_{}.csv'.format(FLAGS.tag,ind), index=False, header=False)
- 
+  kw_isFound = [kw in "".join(result) for kw in keywordList]
+  if any(kw_isFound):
+      print ('This is relevant')
+  else:
+      print ('No cup found')
+  
+  
 if __name__ == '__main__':
   parser = argparse.ArgumentParser()
   # classify_image_graph_def.pb:
@@ -225,25 +222,20 @@ if __name__ == '__main__':
   parser.add_argument(
       '--model_dir',
       type=str,
-      default='/tmp/imagenet',
+      default='model_dir',
       help="""\
       Path to classify_image_graph_def.pb,
       imagenet_synset_to_human_label_map.txt, and
       imagenet_2012_challenge_label_map_proto.pbtxt.\
       """
   )
-#  parser.add_argument(
-#      '--image_file',
-#      type=str,
-#      default='',
-#      help='Absolute path to image file.'
-#  )
   parser.add_argument(
-      '--tag',
+      '--image_file',
       type=str,
-      default='cups_12pic',
-      help='path to image files'
+      default='',
+      help='Absolute path to image file.'
   )
+
   parser.add_argument(
       '--num_top_predictions',
       type=int,

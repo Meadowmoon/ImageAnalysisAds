@@ -4,28 +4,54 @@ import pandas as pd
 import subprocess
 from collections import Counter
 from statistics import mean
+import glob
 
 os.chdir('C:\\myProj\\ImageAnalysisAds\\ImageAnalysisAds.Crawler')
 
-def get_obj_detected (TAG='cups_12pic'):
+def get_obj_detected (TAG='cups'):
     '''call classify_image.py and return csv of classification results'''
     st=time.time()
     STD = ["python", "classify_image.py", "--model_dir", "model_dir"]
     process = subprocess.Popen(
             STD + ["--tag",TAG],
-            shell=1,
-            stdout=subprocess.PIPE,
-            stderr=subprocess.PIPE)
+            shell=1
+			#,stdout=subprocess.PIPE,
+            #stderr=subprocess.PIPE
+			)
     
-    _stdout,_ = process.communicate()
+    #_stdout,_ = process.communicate()
     print (time.time()-st)
-    return _stdout
+   
+
+def combine_result (TAG='cups'):
+    result = pd.DataFrame([])
+    for csv in glob.glob('{}_result_*'.format(TAG)):
+        res = pd.read_csv(csv,header=None)
+        result = result.append(res)
     
-#    result = os.popen('python classify_image.py --image_file {}'.format(img_path)).read()
-#    result = re.split("\n",result)[0:5]
-#    result = [re.split("[()]|= ",res)[0:3:2] for res in result]
-#    result = list(zip(*result))
+    result.to_csv('{}_result.csv'.format(TAG), index=False, header=False)
     
+    return list(result[0])
+
+#def remove_checkpoints (TAG='cups'):
+#    for csv in glob.glob('{}_result_*'.format(TAG)):
+#        os.remove(csv)
+
+
+def count_classification(clf_result,num_to_show=30):
+    '''    
+        clf_result: list of image classification results    
+    '''    
+    def round2 (float):
+    #convert float to 2dp percentage
+        return round(float*100,2)
+
+    n = len(clf_result)
+    counter = Counter(clf_result).most_common(num_to_show)
+    res = [(item,round2(c/n)) for item,c in counter]
+     
+    return res
+
 def top5_errorRate (clf_result,keywordList):
     '''
     clf_result: list of image classification results in sets of 5 predictions
@@ -45,28 +71,17 @@ def top5_errorRate (clf_result,keywordList):
     return mean(isInkeywordList)
 
 
-def round2 (float):
-    '''convert float to 2dp percentage'''
-    return round(float*100,2)
+if __name__ == '__main__':
+	TAG='cups'
+	get_obj_detected(TAG='cups')
     
-
-def count_classification(clf_result):
-    '''    clf_result: list of image classification results    '''
-    n = len(clf_result)
-    counter = Counter(clf_result).most_common()
-    res = [(item,round2(c/n)) for item,c in counter]
-     
-    return res
-
-TAG='cups_12pic'
-get_obj_detected(TAG='cups')
-
-count_classification(clf_result)
-
-clf_result = pd.read_csv('{}_result.csv'.format(TAG), header=None)[0]
-clf_result = list(clf_result)
-keywordList={'glass','mug','cup'}
-top5_errorRate(clf_result,keywordList)
+    #clf_result = list(pd.read_csv('{}_result.csv'.format(TAG), header=None)[0])
+    clf_result = combine_result (TAG='cups')
+    
+    sorted_result = count_classification(clf_result)
+	
+	keywordList={'glass','mug','cup','coffee'}
+	top5_errorRate(clf_result,keywordList) # 0.3918918918918919
 
 
 

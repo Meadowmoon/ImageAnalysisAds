@@ -1,0 +1,18 @@
+python classify_image2.py --image_file C:\myProj\ImageAnalysisAds\ImageAnalysisAds.Crawler\cups_12pic\cup.jpg
+
+cup (score = 0.11259)
+coffee mug (score = 0.10584)
+eggnog (score = 0.06008)
+candle, taper, wax light (score = 0.03606)
+consomme (score = 0.03173)
+This is relevant
+
+
+python classify_image2.py --image_file C:\myProj\ImageAnalysisAds\ImageAnalysisAds.Crawler\cups_12pic\baby.jpg
+
+dining table, board (score = 0.59746)
+rocking chair, rocker (score = 0.04484)
+eggnog (score = 0.04144)
+mixing bowl (score = 0.02511)
+restaurant, eating house, eating place, eatery (score = 0.01850)
+No cup found
