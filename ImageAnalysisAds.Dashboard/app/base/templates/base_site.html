@@ -44,7 +44,9 @@
 
           {% block sidebar %}
             <div class="col-md-3 left_col {% block sidebar_class %} {% endblock sidebar_class %}">
-              {% if current_user.username == 'admin' %}
+              {% if current_user.username == 'boss' %}
+                {% include "site_template/sidebar_boss.html" %}
+              {% elif  current_user.username == 'admin' %}
                 {% include "site_template/sidebar_admin.html" %}
               {% else %}
                 {% include "site_template/sidebar.html" %}

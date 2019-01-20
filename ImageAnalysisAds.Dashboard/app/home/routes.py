@@ -84,9 +84,45 @@ def get_count_by_daterange(start_day, tomorrow):
         date_images_htmls.append(temp)
     return date_images_htmls
 
-@blueprint.route('/index')
+@blueprint.route('/get_labels', methods=['GET'])
 @login_required
-def index():
+def get_labels():
+    file_list=os.listdir(current_app.config['LABEL_FOLDER'])
+    for fichier in file_list[:]:
+        if not(allowed_file(fichier)):
+            file_list.remove(fichier)
+
+    return json.dumps(file_list)
+
+@blueprint.route('/post_mapping', methods=['POST'])
+@login_required
+def post_mapping():
+    object_type = request.form.get('object_type')
+    label = request.form.get('labelOptions')
+
+    image_record = Image.query.filter_by(name=label).filter_by(type='label').first()
+    mapping_record = Mapping.query.filter_by(object_type=object_type).first()
+    if image_record:
+        mapping_record.labelimage_id = image_record.id
+        db.session.commit()
+    else:
+        file_path = os.path.join(current_app.config['LABEL_FOLDER'], label)
+        file_size = os.stat(file_path).st_size
+        image = Image(name=label, size=file_size, type='label')
+        db.session.add(image)
+        db.session.commit()
+
+        image_id = Image.query.filter_by(name=label).filter_by(type='label').first().id
+        mapping_record.labelimage_id = image_id
+        db.session.commit()
+
+    Mbox('Info','Mapping settings is updated',0)
+    return render_template('label_mapping.html')
+
+
+@blueprint.route('/image_process')
+@login_required
+def image_process():
     return render_template('image_process.html')
 
 @blueprint.route('/customrange', methods=['GET'])
@@ -285,7 +321,7 @@ def upload_Image():
                 user_id = current_user.id,
                 origin_filename = file.filename,
                 upload_datetime = start_time,
-                device = 'PC'
+                device = 'Windows'
             )
             db.session.add(user_image)
             db.session.commit()
