@@ -1,44 +1,88 @@
 import os
+import time
+import pandas as pd
+import subprocess
+from collections import Counter
+from statistics import mean
+import glob
 
-def find_top5err (all_obj_detected,keywordList):
-    n = len(outcome)/5 #number of images
+os.chdir('C:\\myProj\\ImageAnalysisAds\\ImageAnalysisAds.Crawler')
+
+def get_obj_detected (TAG='cups'):
+    '''call classify_image.py and return csv of classification results'''
+    st=time.time()
+    STD = ["python", "classify_image.py", "--model_dir", "model_dir"]
+    process = subprocess.Popen(
+            STD + ["--tag",TAG],
+            shell=1
+			#,stdout=subprocess.PIPE,
+            #stderr=subprocess.PIPE
+			)
+    
+    #_stdout,_ = process.communicate()
+    print (time.time()-st)
+   
+
+def combine_result (TAG='cups'):
+    result = pd.DataFrame([])
+    for csv in glob.glob('{}_result_*'.format(TAG)):
+        res = pd.read_csv(csv,header=None)
+        result = result.append(res)
+    
+    result.to_csv('{}_result.csv'.format(TAG), index=False, header=False)
+    
+    return list(result[0])
+
+#def remove_checkpoints (TAG='cups'):
+#    for csv in glob.glob('{}_result_*'.format(TAG)):
+#        os.remove(csv)
+
+
+def count_classification(clf_result,num_to_show=30):
+    '''    
+        clf_result: list of image classification results    
+    '''    
+    def round2 (float):
+    #convert float to 2dp percentage
+        return round(float*100,2)
+
+    n = len(clf_result)
+    counter = Counter(clf_result).most_common(num_to_show)
+    res = [(item,round2(c/n)) for item,c in counter]
+     
+    return res
+
+def top5_errorRate (clf_result,keywordList):
+    '''
+    clf_result: list of image classification results in sets of 5 predictions
+    keywordList: list of positive classifications
+    '''
+    n = int (len(clf_result)/5) #number of images
     isInkeywordList = []
     
-    for i in range (int(n)):
-        obj_det = all_obj_detected[i*5:i*5+5]
-        isInkeywordList.append(any(kw in "".join(obj_det) for kw in keywordList))
-    
-    return sum(isInkeywordList)/len(isInkeywordList)
-
-def characterize_hashtag(TAG, keywordList):
-    img_dir = os.listdir(TAG)    
-    all_obj_detected = ()
-    img_dict={}
-    
-    for img in img_dir:
-        img_path = os.path.join(TAG,img)
+    for i in range (n):
+        obj_det = clf_result[i*5:i*5+5]
+        print (obj_det)
         
-        obj_detected = get_obj_detected(img_path)
-        try:
-            img_dict[img].append(obj_detected)
-        except:
-            pass        
-
-        all_obj_detected += obj_detected[0]
-                
-    top5err = find_top5err(all_obj_detected,keywordList)
+        kw_isFound = [kw in "".join(obj_det) for kw in keywordList]
+        isInkeywordList.append(any(kw_isFound))
+        print (list(zip(kw_isFound,keywordList)))
     
-    with open("{}_obj_det.json".format(TAG),"w") as f:
-        json.dump(img_dict,f,indent=4)
-        
-    with open("{}_obj_counter.json".format(TAG),"w") as f:
-        json.dump(Counter(all_obj_detected).most_common(),f,indent=4)
-     
-    return Counter(all_obj_detected).most_common(),all_obj_detected, top5err
+    return mean(isInkeywordList)
 
 
-keywordList={'glass','mug','basin'}
-tag_distribution, top5err = characterize_hashtag(TAG,keywordList)
+if __name__ == '__main__':
+	TAG='cups'
+	get_obj_detected(TAG='cups')
+    
+    #clf_result = list(pd.read_csv('{}_result.csv'.format(TAG), header=None)[0])
+    clf_result = combine_result (TAG='cups')
+    
+    sorted_result = count_classification(clf_result)
+	
+	keywordList={'glass','mug','cup','coffee'}
+	top5_errorRate(clf_result,keywordList) # 0.3918918918918919
+
 
 
     

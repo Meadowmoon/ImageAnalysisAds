@@ -81,7 +81,7 @@ class OverlayOp:
         for x in range(overlay_width):
             if x + self.posx < src_width:
                 for y in range(overlay_height):    
-                    if y + self.posy < src_width:
+                    if y + self.posy < src_height:
                         source = src[y + self.posy, x + self.posx]
                         over = overlay[y, x]
                         merger = source
@@ -110,9 +110,9 @@ class OverlayOp:
         if ratio > 1.0 :
             ratio = 1.0
         # Resize overlay image.
-        overlay = cv2.resize(overlay, (0, 0), fx=ratio, fy=ratio) 
-        overlay_height, overlay_width = overlay.shape[:2]
-        overlay = self.RmoveBackground(overlay)        
+        overlay = self.RmoveBackground(overlay)   
+        overlay = cv2.resize(overlay, (0, 0), fx=ratio, fy=ratio, interpolation = cv2.INTER_AREA )     
+        overlay_height, overlay_width = overlay.shape[:2]       
 
         if corner == CORNER.TOP_LEFT :
             self.posx = 0
