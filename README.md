@@ -1,5 +1,10 @@
 # ImageAnalysisAds
 FYP - Image Analysis for Advertisement in Social Media 
+1. ImageAnalysisAds.Crawler - The scripts to grap images from internet and source images for training the object detection model
+2. ImageAnalysisAds.Dashboard - The web application using API of object detection and image overlay to do demo
+3. ImageAnalysisAds.Mapper - The model of image overlay
+4. ImageAnalysisAds.Models - The model of object detection
+5. ImageAnalysisAds.WebAPI - exposed API port of object detection and image overlay
 
 # Tutorials:
 Python + Flask:<br/>
