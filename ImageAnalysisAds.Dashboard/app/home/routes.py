@@ -87,6 +87,7 @@ def get_count_by_daterange(start_day, tomorrow):
 
 def is_cup_contained(file_path):
     clarifai_key = AppConfig.query.filter_by(ConfigName = 'ClarifaiKey').first().ConfigValue
+    keywords = AppConfig.query.filter_by(ConfigName = 'Keywords').first().ConfigValue
     clarifai_app = ClarifaiApp(api_key=clarifai_key)
     model = clarifai_app.public_models.general_model
     response = model.predict_by_filename(file_path)
@@ -94,7 +95,9 @@ def is_cup_contained(file_path):
         if response['status']['code']==10000:
             concepts = response['outputs'][0]['data']['concepts']
             for concept in concepts:
-                if (concept['name'].lower() == 'cup') or (concept['name'].lower() == 'mug') or (concept['name'].lower() == 'teacup'):
+                if concept['name'].lower() in keywords:
+                    print(keywords)
+                    print(concept['name'])
                     return True
             else:
                 return False
@@ -248,7 +251,7 @@ def upload_Image():
                 originfile_path = os.path.join(current_app.config['ORIGIN_FOLDER'], new_name)
                 file.save(originfile_path)
             else:
-                Mbox('Error', 'File is not a image', 0)
+                Mbox('Error', 'This format is not supported/not image', 0)
                 return redirect("image_process")
 
         except:

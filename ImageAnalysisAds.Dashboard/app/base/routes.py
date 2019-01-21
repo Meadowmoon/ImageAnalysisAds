@@ -7,11 +7,10 @@ from flask_login import (
 )
 from .forms import LoginForm, CreateAccountForm
 
-
 from app import db, login_manager
 from app.base import blueprint
 from app.base.models import User
-
+from validate_email import validate_email
 
 @blueprint.route('/')
 def route_default():
@@ -51,6 +50,18 @@ def login():
     elif 'create_account' in request.form:
         login_form = LoginForm(request.form)
         user = User(**request.form)
+        if user.username == '' or user.email == '' or user.password == '':
+            return render_template('errors/page_register.html', error_msg = 'Username/Email/Password cannot be empty.')
+
+        is_username_exsiting = User.query.filter_by(username=user.username).first()
+        is_email_existing = User.query.filter_by(email=user.email).first()
+        if is_username_exsiting or is_email_existing:
+            return render_template('errors/page_register.html', error_msg = 'Username/Email is already existing.')
+        
+        is_email_valid = validate_email(user.email)
+        if not is_email_valid:
+            return render_template('errors/page_register.html', error_msg = 'Email is not valid.')
+
         db.session.add(user)
         db.session.commit()
         return redirect(url_for('base_blueprint.login'))
