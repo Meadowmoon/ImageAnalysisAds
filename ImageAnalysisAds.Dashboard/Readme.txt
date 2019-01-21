@@ -28,21 +28,6 @@ https://github.com/kdung/ImageAnalysisAds/wiki/how-to-test-serving-api
 
 4. Ready to test!
 
-Caution:
-- DB data is static
-DB file is in ImageAnalysisAds.Dashboard\db folder, since it's local, the data inside will be different for every person.
-We need to create some 'nice' data for presentation, but before that, please test and DON'T commit your changes of the db file
-Current accounts:
-admin, test, michael, tom, marry; passwords are same; if you login in as admin, the GUI will be different with other accounts
-
-- Image locations:
-Original Image: ImageAnalysisAds.Dashboard\app\base\static\images\img_origin
-Framed Image: ImageAnalysisAds.Dashboard\app\base\static\images\img_framed
-Result Image: ImageAnalysisAds.Dashboard\app\base\static\images\img_result
-Labels: ImageAnalysisAds.Dashboard\app\base\static\images\label
-I have uploaded some testing files allowing you to look and feel; Also the images will be different too as they are local
-Don't commit your images after testing.
-
 - If needs to access the database.db file:
 > https://www.youtube.com/watch?v=wXEZZ2JT3-k
 > Install https://sqlitebrowser.org/ GUI tool to view the data
