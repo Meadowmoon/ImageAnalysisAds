@@ -25,6 +25,15 @@ def register_folders(app):
     app.config['RESULT_FOLDER'] = image_folder+'\\img_result'
     app.config['LABEL_FOLDER'] = image_folder+'\\label'
 
+    if not os.path.exists(app.config['ORIGIN_FOLDER']):
+        os.makedirs(app.config['ORIGIN_FOLDER'])
+    if not os.path.exists(app.config['FRAME_FOLDER']):
+        os.makedirs(app.config['FRAME_FOLDER'])
+    if not os.path.exists(app.config['RESULT_FOLDER']):
+        os.makedirs(app.config['RESULT_FOLDER'])
+    if not os.path.exists(app.config['LABEL_FOLDER']):
+        os.makedirs(app.config['LABEL_FOLDER'])
+
     app.config['STATIC_ORIGIN_FOLDER'] = os.path.join('\static', 'images', 'img_origin')
     app.config['STATIC_FRAME_FOLDER'] = os.path.join('\static', 'images', 'img_framed')
     app.config['STATIC_RESULT_FOLDER'] = os.path.join('\static', 'images', 'img_result')
