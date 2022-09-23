@@ -20,7 +20,7 @@ Mako==1.0.7
 MarkupSafe==1.1.0
 numpy==1.15.4
 opencv-python==4.0.0.21
-protobuf==3.6.1
+protobuf==3.18.3
 PyMySQL==0.9.3
 python-dateutil==2.7.5
 python-editor==1.0.3
